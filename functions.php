@@ -336,8 +336,6 @@ $response = array(
         'lastName'    => $user->last_name,
     ),
 );
-print_r($response);
-
 
 /**
  * Modify the response of valid credential.
