@@ -359,23 +359,15 @@ add_filter(
 add_filter(
     'jwt_auth_payload',
     function ( $payload, $user ) {
-        $issued_at = time();
-        $not_before = time();
-        $expire = time() + (DAY_IN_SECONDS * 1);
 
-        $payload = array(
-            'iss' => get_bloginfo('url'),
-            'iat' => $issued_at,
-            'nbf' => $not_before,
-            'exp' => $expire,
-            'data' => array(
-                'user' => array(
-                    'id' => $user->ID,
-                    'email' => $user->user_email,
-                    'role' => $user->roles,
-                )
-            )
-        );
+
+        $payload = 'data' => array(
+                    'user' => array(
+                        'id' => $user->ID,
+                        'email' => $user->user_email,
+                        'role' => $user->roles,
+                    )
+                );
         return $payload;
     },
     10,
