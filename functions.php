@@ -359,9 +359,9 @@ add_filter(
 add_filter(
     'jwt_auth_payload',
     function ( $payload, $user ) {
-        // $issued_at = time();
-        // $not_before = time();
-        // $expire = time() + (DAY_IN_SECONDS * 1);
+        $issued_at = time();
+        $not_before = time();
+        $expire = time() + (DAY_IN_SECONDS * 1);
 
         $payload = array(
             'iss' => get_bloginfo('url'),
