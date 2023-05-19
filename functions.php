@@ -348,7 +348,8 @@ $response = array(
 add_filter(
     'jwt_auth_valid_credential_response',
     function ( $response, $user ) {
-        // Modify the response here.
+        error_log('Response: ' . print_r($response, true));
+        error_log('User: ' . print_r($user, true));
         return $response;
     },
     10,
