@@ -385,10 +385,6 @@ add_filter(
 add_filter(
     'jwt_auth_payload',
     function ( $payload, $user ) {
-        // Modify the payload here.
-        $issued_at = time();
-        $not_before = $issued_at + 10; // Assuming token should be valid 10 seconds after issued_at
-        $expire = $issued_at + DAY_IN_SECONDS; // Assuming token should expire 1 day after issued_at
         $payload = array(
             'iss' => get_bloginfo('url'),
             'iat' => $issued_at,
