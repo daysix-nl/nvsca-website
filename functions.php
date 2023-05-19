@@ -336,7 +336,8 @@ $response = array(
         'lastName'    => $user->last_name,
     ),
 );
-
+        print_r($response)
+        print_r($user)
 
 
 /**
@@ -350,8 +351,7 @@ $response = array(
 add_filter(
     'jwt_auth_valid_credential_response',
     function ( $response, $user ) {
-         print_r($response)
-        print_r($user)
+
         return $response;
     },
     10,
