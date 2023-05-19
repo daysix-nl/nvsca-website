@@ -336,8 +336,7 @@ $response = array(
         'lastName'    => $user->last_name,
     ),
 );
-        print_r($response)
-        print_r($user)
+print_r($response);
 
 
 /**
