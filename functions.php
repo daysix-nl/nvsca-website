@@ -375,3 +375,36 @@ add_filter(
     10,
     2
 );
+
+
+
+$token = array(
+    'iss' => get_bloginfo('url'),
+    'iat' => $issued_at,
+    'nbf' => $not_before,
+    'exp' => $expire,
+    'data' => array(
+        'user' => array(
+            'id' => $user->ID,
+            'email' => $user->user_email,
+            'role' => $user->roles,
+        )
+    )
+);
+/**
+ * Modify the payload/ token's data before being encoded & signed.
+ *
+ * @param array $payload The default payload
+ * @param WP_User $user The authenticated user.
+ * .
+ * @return array The payload/ token's data.
+ */
+add_filter(
+    'jwt_auth_payload',
+    function ( $payload, $user ) {
+        // Modify the payload here.
+        return $payload;
+    },
+    10,
+    2
+);
