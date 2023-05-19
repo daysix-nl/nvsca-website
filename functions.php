@@ -374,17 +374,13 @@ add_filter(
 );
 
 
-/**
- * Modify the payload/ token's data before being encoded & signed.
- *
- * @param array $payload The default payload
- * @param WP_User $user The authenticated user.
- * .
- * @return array The payload/ token's data.
- */
 add_filter(
     'jwt_auth_payload',
     function ( $payload, $user ) {
+        $issued_at = time();
+        $not_before = time();
+        $expire = time() + (DAY_IN_SECONDS * 1);
+
         $payload = array(
             'iss' => get_bloginfo('url'),
             'iat' => $issued_at,
