@@ -337,8 +337,7 @@ $response = array(
     ),
 );
 
-         print_r($response)
-        print_r($user)
+
 
 /**
  * Modify the response of valid credential.
@@ -351,7 +350,8 @@ $response = array(
 add_filter(
     'jwt_auth_valid_credential_response',
     function ( $response, $user ) {
-
+         print_r($response)
+        print_r($user)
         return $response;
     },
     10,
