@@ -383,7 +383,7 @@ add_filter(
             'email' => $user->user_email,
             'role' => $user->roles[0],
             'device' => '',
-            'pass' => wp_hash_password( $user_pass );,
+            'pass' =>  wp_hash_password($user->user_pass),
         );
         return $payload;
     },
