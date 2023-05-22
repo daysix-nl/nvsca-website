@@ -333,27 +333,28 @@ add_action('init', 'add_event_rest_support', 25);
  * .
  * @return array The valid credential response.
  */
-// add_filter(
-//     'jwt_auth_valid_credential_response',
-//     function ( $response, $user ) {
-//         // Modify the response here.
-//         $response = array(
-//             'success'    => true,
-//             'statusCode' => 200,
-//             'code'       => 'jwt_auth_valid_credential',
-//             'message'    => __( 'Credential is valid', 'jwt-auth' ),
-//             'data'       => array(
-//                 'id'          => $user->ID,
-//                 'email'       => $user->user_email,
-//                 'firstName'   => $user->first_name,
-//                 'lastName'    => $user->last_name,
-//             ),
-//         );
-//         return $response;
-//     },
-//     10,
-//     2
-// );
+add_filter(
+    'jwt_auth_valid_credential_response',
+    function ( $response, $user ) {
+        // Modify the response here.
+        $response = array(
+            'success'    => true,
+            'statusCode' => 200,
+            'code'       => 'jwt_auth_valid_credential',
+            'message'    => __( 'Credential is valid', 'jwt-auth' ),
+            'data'       => array(
+                'id'          => $user->ID,
+                'email'       => $user->user_email,
+                'firstName'   => $user->first_name,
+                'lastName'    => $user->last_name,
+                'role'       => $user->roles[0],
+            ),
+        );
+        return $response;
+    },
+    10,
+    2
+);
 
 /**
  * Change the token's expire value.
@@ -374,16 +375,16 @@ add_filter(
 );
 
 
-// add_filter(
-//     'jwt_auth_payload',
-//     function ( $payload, $user ) {
-//         $payload['data']['user'] = array(
-//             'id' => $user->ID,
-//             'email' => $user->user_email,
-//             'role' => $user->roles[0],
-//         );
-//         return $payload;
-//     },
-//     10,
-//     2
-// );
+add_filter(
+    'jwt_auth_payload',
+    function ( $payload, $user ) {
+        $payload['data']['user'] = array(
+            'id' => $user->ID,
+            'email' => $user->user_email,
+            'role' => $user->roles[0],
+        );
+        return $payload;
+    },
+    10,
+    2
+);
