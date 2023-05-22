@@ -333,23 +333,41 @@ add_action('init', 'add_event_rest_support', 25);
  * .
  * @return array The valid credential response.
  */
+// add_filter(
+//     'jwt_auth_valid_credential_response',
+//     function ( $response, $user ) {
+//         // Modify the response here.
+//         $response = array(
+//             'success'    => true,
+//             'statusCode' => 200,
+//             'code'       => 'jwt_auth_valid_credential',
+//             'message'    => __( 'Credential is valid', 'jwt-auth' ),
+//             'data'       => array(
+//                 'id'          => $user->ID,
+//                 'email'       => $user->user_email,
+//                 'firstName'   => $user->first_name,
+//                 'lastName'    => $user->last_name,
+//             ),
+//         );
+//         return $response;
+//     },
+//     10,
+//     2
+// );
+
+/**
+ * Change the token's expire value.
+ *
+ * @param int $expire The default "exp" value in timestamp.
+ * @param int $issued_at The "iat" value in timestamp.
+ *
+ * @return int The "nbf" value.
+ */
 add_filter(
-    'jwt_auth_valid_credential_response',
-    function ( $response, $user ) {
-        // Modify the response here.
-        $response = array(
-            'success'    => true,
-            'statusCode' => 200,
-            'code'       => 'jwt_auth_valid_credential',
-            'message'    => __( 'Credential is valid', 'jwt-auth' ),
-            'data'       => array(
-                'id'          => $user->ID,
-                'email'       => $user->user_email,
-                'firstName'   => $user->first_name,
-                'lastName'    => $user->last_name,
-            ),
-        );
-        return $response;
+    'jwt_auth_expire',
+    function ( $expire, $issued_at ) {
+        // Modify the "expire" here.
+        return time() + (DAY_IN_SECONDS * 1);
     },
     10,
     2
@@ -359,15 +377,11 @@ add_filter(
 add_filter(
     'jwt_auth_payload',
     function ( $payload, $user ) {
-
-
-        $payload = 'data' => array(
-                    'user' => array(
-                        'id' => $user->ID,
-                        'email' => $user->user_email,
-                        'role' => $user->roles,
-                    )
-                );
+        $payload['data']['user'] = array(
+            'id' => $user->ID,
+            'email' => $user->user_email,
+            'role' => $user->roles,
+        );
         return $payload;
     },
     10,
