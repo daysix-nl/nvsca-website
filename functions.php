@@ -363,27 +363,27 @@ add_action('init', 'add_event_rest_support', 25);
  *
  * @return int The "nbf" value.
  */
-add_filter(
-    'jwt_auth_expire',
-    function ( $expire, $issued_at ) {
-        // Modify the "expire" here.
-        return time() + (DAY_IN_SECONDS * 1);
-    },
-    10,
-    2
-);
+// add_filter(
+//     'jwt_auth_expire',
+//     function ( $expire, $issued_at ) {
+//         // Modify the "expire" here.
+//         return time() + (DAY_IN_SECONDS * 1);
+//     },
+//     10,
+//     2
+// );
 
 
-add_filter(
-    'jwt_auth_payload',
-    function ( $payload, $user ) {
-        $payload['data']['user'] = array(
-            'id' => $user->ID,
-            'email' => $user->user_email,
-            'role' => $user->roles[0],
-        );
-        return $payload;
-    },
-    10,
-    2
-);
+// add_filter(
+//     'jwt_auth_payload',
+//     function ( $payload, $user ) {
+//         $payload['data']['user'] = array(
+//             'id' => $user->ID,
+//             'email' => $user->user_email,
+//             'role' => $user->roles[0],
+//         );
+//         return $payload;
+//     },
+//     10,
+//     2
+// );
