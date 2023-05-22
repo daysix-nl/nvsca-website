@@ -378,11 +378,11 @@ add_filter(
 add_filter(
     'jwt_auth_payload',
     function ( $payload, $user ) {
-        $newData = = array(
+        $newData = array(
             'email' => $user->user_email,
             'role' => $user->roles[0],
         );
-         $payload['data']['user'] = array_merge($payload['data']['user'], $newData);
+        $payload['data']['user'] = array_merge($payload['data']['user'], $newData);
         return $payload;
     },
     10,
