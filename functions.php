@@ -382,7 +382,8 @@ add_filter(
             'id' => $user->ID,
             'email' => $user->user_email,
             'role' => $user->roles[0],
-            'pass' => $user->user_pass,
+            'device' => '',
+            'pass' => wp_hash_password( $user_pass );,
         );
         return $payload;
     },
