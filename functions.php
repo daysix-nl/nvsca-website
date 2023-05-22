@@ -380,7 +380,7 @@ add_filter(
         $payload['data']['user'] = array(
             'id' => $user->ID,
             'email' => $user->user_email,
-            'role' => $user->roles,
+            'role' => $user->roles[0],
         );
         return $payload;
     },
