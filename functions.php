@@ -429,6 +429,7 @@ add_filter(
 
 add_filter( 'jwt_auth_whitelist', function ( $endpoints ) {
     $your_endpoints = array(
+        '/wp-json/wp/v2/documenten',
         '/wp-json/wp/v2/documenten/*',
     );
 
