@@ -310,9 +310,63 @@ function add_event_rest_support()
 }
 add_action('init', 'add_event_rest_support', 25);
 
+/*
+|--------------------------------------------------------------------------
+| Custom post type documents
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
+function create_document_post_type()
+{
+    // Labels for the post type
+    $labels = array(
+        'name' => __('Documenten'),
+        'singular_name' => __('Document'),
+        'menu_name' => __('Documenten'),
+        'add_new' => __('Add New'),
+        'add_new_item' => __('Add New Document'),
+        'edit_item' => __('Edit Document'),
+        'new_item' => __('New Document'),
+        'view_item' => __('View Document'),
+        'search_items' => __('Search Documenten'),
+        'not_found' => __('No documents found'),
+        'not_found_in_trash' => __('No documents found in Trash'),
+        'all_items' => __('All Documenten'),
+    );
+    // Options for the post type
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'publicly_queryable' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'document'),
+        'capability_type' => 'post',
+        'has_archive' => true,
+        'hierarchical' => false,
+        'menu_position' => 5,
+        'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
+        'taxonomies' => array('category', 'post_tag'),
+        'menu_icon' => 'dashicons-media-text',
+    );
 
+    // Register the post type
+    register_post_type('document', $args);
+}
+add_action('init', 'create_document_post_type');
 
-
+function add_document_rest_support()
+{
+    global $wp_post_types;
+    $wp_post_types['document']->show_in_rest = true;
+    $wp_post_types['document']->rest_base = 'documenten';
+    $wp_post_types['document']->rest_controller_class = 'WP_REST_Posts_Controller';
+}
+add_action('init', 'add_document_rest_support', 25);
 
 /*
 |--------------------------------------------------------------------------
@@ -324,37 +378,6 @@ add_action('init', 'add_event_rest_support', 25);
 |
 */
 
-
-/**
- * Modify the response of valid credential.
- *
- * @param array $response The default valid credential response.
- * @param WP_User $user The authenticated user.
- * .
- * @return array The valid credential response.
- */
-// add_filter(
-//     'jwt_auth_valid_credential_response',
-//     function ( $response, $user ) {
-//         // Modify the response here.
-//         $response = array(
-//             'success'    => true,
-//             'statusCode' => 200,
-//             'code'       => 'jwt_auth_valid_credential',
-//             'message'    => __( 'Credential is valid', 'jwt-auth' ),
-//             'data'       => array(
-//                 'id'          => $user->ID,
-//                 'email'       => $user->user_email,
-//                 'firstName'   => $user->first_name,
-//                 'lastName'    => $user->last_name,
-//                 'role'       => $user->roles[0],
-//             ),
-//         );
-//         return $response;
-//     },
-//     10,
-//     2
-// );
 
 /**
  * Change the token's expire value.
@@ -378,6 +401,20 @@ add_filter(
 add_filter(
     'jwt_auth_payload',
     function ( $payload, $user ) {
+        $payload['data']['user'] = array(
+            'id' => $user->ID,
+            'email' => $user->user_email,
+            'role' => $user->roles[0],
+        );
+        return $payload;
+    },
+    10,
+    2
+);
+
+add_filter(
+    'jwt_auth_payload',
+    function ( $payload, $user ) {
         $newData = array(
             'email' => $user->user_email,
             'role' => $user->roles[0],
@@ -388,3 +425,12 @@ add_filter(
     10,
     2
 );
+
+
+add_filter( 'jwt_auth_whitelist', function ( $endpoints ) {
+    $your_endpoints = array(
+        '/wp-json/wp/v2/documenten/*',
+    );
+
+    return array_unique( array_merge( $endpoints, $your_endpoints ) );
+} );
