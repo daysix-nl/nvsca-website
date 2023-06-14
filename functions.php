@@ -319,54 +319,54 @@ add_action('init', 'add_event_rest_support', 25);
 | 
 |
 */
-// function create_document_post_type()
-// {
-//     // Labels for the post type
-//     $labels = array(
-//         'name' => __('Documenten'),
-//         'singular_name' => __('Document'),
-//         'menu_name' => __('Documenten'),
-//         'add_new' => __('Add New'),
-//         'add_new_item' => __('Add New Document'),
-//         'edit_item' => __('Edit Document'),
-//         'new_item' => __('New Document'),
-//         'view_item' => __('View Document'),
-//         'search_items' => __('Search Documenten'),
-//         'not_found' => __('No documents found'),
-//         'not_found_in_trash' => __('No documents found in Trash'),
-//         'all_items' => __('All Documenten'),
-//     );
-//     // Options for the post type
-//     $args = array(
-//         'labels' => $labels,
-//         'public' => true,
-//         'publicly_queryable' => true,
-//         'show_ui' => true,
-//         'show_in_menu' => true,
-//         'query_var' => true,
-//         'rewrite' => array('slug' => 'document'),
-//         'capability_type' => 'post',
-//         'has_archive' => true,
-//         'hierarchical' => false,
-//         'menu_position' => 5,
-//         'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
-//         'taxonomies' => array('category', 'post_tag'),
-//         'menu_icon' => 'dashicons-media-text',
-//     );
+function create_document_post_type()
+{
+    // Labels for the post type
+    $labels = array(
+        'name' => __('Documenten'),
+        'singular_name' => __('Document'),
+        'menu_name' => __('Documenten'),
+        'add_new' => __('Add New'),
+        'add_new_item' => __('Add New Document'),
+        'edit_item' => __('Edit Document'),
+        'new_item' => __('New Document'),
+        'view_item' => __('View Document'),
+        'search_items' => __('Search Documenten'),
+        'not_found' => __('No documents found'),
+        'not_found_in_trash' => __('No documents found in Trash'),
+        'all_items' => __('All Documenten'),
+    );
+    // Options for the post type
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'publicly_queryable' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'document'),
+        'capability_type' => 'post',
+        'has_archive' => true,
+        'hierarchical' => false,
+        'menu_position' => 5,
+        'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
+        'taxonomies' => array('category', 'post_tag'),
+        'menu_icon' => 'dashicons-media-text',
+    );
 
-//     // Register the post type
-//     register_post_type('document', $args);
-// }
-// add_action('init', 'create_document_post_type');
+    // Register the post type
+    register_post_type('document', $args);
+}
+add_action('init', 'create_document_post_type');
 
-// function add_document_rest_support()
-// {
-//     global $wp_post_types;
-//     $wp_post_types['document']->show_in_rest = true;
-//     $wp_post_types['document']->rest_base = 'documenten';
-//     $wp_post_types['document']->rest_controller_class = 'WP_REST_Posts_Controller';
-// }
-// add_action('init', 'add_document_rest_support', 25);
+function add_document_rest_support()
+{
+    global $wp_post_types;
+    $wp_post_types['document']->show_in_rest = true;
+    $wp_post_types['document']->rest_base = 'documenten';
+    $wp_post_types['document']->rest_controller_class = 'WP_REST_Posts_Controller';
+}
+add_action('init', 'add_document_rest_support', 25);
 
 /*
 |--------------------------------------------------------------------------
@@ -427,14 +427,14 @@ add_filter(
 );
 
 
-// function restrict_documenten_rest_api_to_logged_in_users($result, $server, $request) {
-//     if (strpos($request->get_route(), '/wp/v2/documenten') !== false && !is_user_logged_in()) {
-//         return new WP_Error(
-//             'rest_not_logged_in',
-//             'You must be logged in to access the REST API.',
-//             array('status' => 401)
-//         );
-//     }
-//     return $result;
-// }
-// add_filter('rest_pre_dispatch', 'restrict_documenten_rest_api_to_logged_in_users', 10, 3);
+function restrict_documenten_rest_api_to_logged_in_users($result, $server, $request) {
+    if (strpos($request->get_route(), '/wp/v2/documenten') !== false && !is_user_logged_in()) {
+        return new WP_Error(
+            'rest_not_logged_in',
+            'You must be logged in to access the REST API.',
+            array('status' => 401)
+        );
+    }
+    return $result;
+}
+add_filter('rest_pre_dispatch', 'restrict_documenten_rest_api_to_logged_in_users', 10, 3);
