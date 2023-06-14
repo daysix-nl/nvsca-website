@@ -379,23 +379,23 @@ add_action('init', 'add_document_rest_support', 25);
 */
 
 
-// /**
-//  * Change the token's expire value.
-//  *
-//  * @param int $expire The default "exp" value in timestamp.
-//  * @param int $issued_at The "iat" value in timestamp.
-//  *
-//  * @return int The "nbf" value.
-//  */
-// add_filter(
-//     'jwt_auth_expire',
-//     function ( $expire, $issued_at ) {
-//         // Modify the "expire" here.
-//         return time() + (DAY_IN_SECONDS * 1);
-//     },
-//     10,
-//     2
-// );
+/**
+ * Change the token's expire value.
+ *
+ * @param int $expire The default "exp" value in timestamp.
+ * @param int $issued_at The "iat" value in timestamp.
+ *
+ * @return int The "nbf" value.
+ */
+add_filter(
+    'jwt_auth_expire',
+    function ( $expire, $issued_at ) {
+        // Modify the "expire" here.
+        return time() + (DAY_IN_SECONDS * 1);
+    },
+    10,
+    2
+);
 
 
 // add_filter(
