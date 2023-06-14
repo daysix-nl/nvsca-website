@@ -398,20 +398,6 @@ add_filter(
 );
 
 
-// add_filter(
-//     'jwt_auth_payload',
-//     function ( $payload, $user ) {
-//         $payload['data']['user'] = array(
-//             'id' => $user->ID,
-//             'email' => $user->user_email,
-//             'role' => $user->roles[0],
-//         );
-//         return $payload;
-//     },
-//     10,
-//     2
-// );
-
 add_filter(
     'jwt_auth_payload',
     function ( $payload, $user ) {
