@@ -412,29 +412,29 @@ add_filter(
 //     2
 // );
 
-// add_filter(
-//     'jwt_auth_payload',
-//     function ( $payload, $user ) {
-//         $newData = array(
-//             'email' => $user->user_email,
-//             'role' => $user->roles[0],
-//         );
-//         $payload['data']['user'] = array_merge($payload['data']['user'], $newData);
-//         return $payload;
-//     },
-//     10,
-//     2
-// );
+add_filter(
+    'jwt_auth_payload',
+    function ( $payload, $user ) {
+        $newData = array(
+            'email' => $user->user_email,
+            'role' => $user->roles[0],
+        );
+        $payload['data']['user'] = array_merge($payload['data']['user'], $newData);
+        return $payload;
+    },
+    10,
+    2
+);
 
 
-// function restrict_documenten_rest_api_to_logged_in_users($result, $server, $request) {
-//     if (strpos($request->get_route(), '/wp/v2/documenten') !== false && !is_user_logged_in()) {
-//         return new WP_Error(
-//             'rest_not_logged_in',
-//             'You must be logged in to access the REST API.',
-//             array('status' => 401)
-//         );
-//     }
-//     return $result;
-// }
-// add_filter('rest_pre_dispatch', 'restrict_documenten_rest_api_to_logged_in_users', 10, 3);
+function restrict_documenten_rest_api_to_logged_in_users($result, $server, $request) {
+    if (strpos($request->get_route(), '/wp/v2/documenten') !== false && !is_user_logged_in()) {
+        return new WP_Error(
+            'rest_not_logged_in',
+            'You must be logged in to access the REST API.',
+            array('status' => 401)
+        );
+    }
+    return $result;
+}
+add_filter('rest_pre_dispatch', 'restrict_documenten_rest_api_to_logged_in_users', 10, 3);
