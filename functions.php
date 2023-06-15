@@ -484,7 +484,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
 
         if (!isset($headers['Authorization'])) {
             return new WP_Error(
-                'jwt_auth_no_auth_header',
+                'jwt_auth_no_auth_header:' $headers['Authorization'],
                 'Authorization cookie not found.',
                 array(
                     'status' => 403,
