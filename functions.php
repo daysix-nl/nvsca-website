@@ -480,8 +480,9 @@ add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
 
 function jwt_authenticate_for_rest_requests($result, $server, $request) {
     if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
+        $headers = getallheaders();
 
-        if (!isset($_COOKIE['wp-jwt'])) {
+        if (!isset($headers['Authorization'])) {
             return new WP_Error(
                 'jwt_auth_no_auth_header',
                 'Authorization cookie not found.',
@@ -491,7 +492,8 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
             );
         }
 
-        $token = $_COOKIE['wp-jwt'];
+        $authHeader = $headers['Authorization'];
+        $token = str_replace('Bearer ', '', $authHeader); 
 
         if (!$token) {
             return new WP_Error(
