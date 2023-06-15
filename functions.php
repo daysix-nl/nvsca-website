@@ -413,28 +413,90 @@ add_filter(
 );
 
 
+// add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
+
+// function jwt_authenticate_for_rest_requests($result, $server, $request) {
+//     if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
+//         $headers = $request->get_headers();
+
+//         if (!isset($headers['wp-jwt'])) {
+//             return new WP_Error(
+//                 'jwt_auth_no_auth_header',
+//                 'Authorization header not found.',
+//                 array(
+//                     'status' => 403,
+//                 )
+//             );
+//         }
+
+//         $token = $headers['wp-jwt'];
+
+//         if (!$token) {
+//             return new WP_Error(
+//                 'jwt_auth_bad_auth_header',
+//                 'Authorization header malformed.',
+//                 array(
+//                     'status' => 403,
+//                 )
+//             );
+//         }
+
+//         // Here replace this with your secret key. It's better to store this in your wp-config.php file.
+//         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+
+//         try {
+//             $user = JWT::decode($token, $secret_key, array('HS256'));
+
+//             if (!isset($user->data->user->id)) {
+//                 return new WP_Error(
+//                     'jwt_auth_invalid_token',
+//                     'Invalid token.',
+//                     array(
+//                         'status' => 403,
+//                     )
+//                 );
+//             }
+//         } catch(Exception $e) {
+//             return new WP_Error(
+//                 'jwt_auth_invalid_token',
+//                 'Invalid token.',
+//                 array(
+//                     'status' => 403,
+//                 )
+//             );
+//         }
+//     header( 'Access-Control-Allow-Origin: *' );
+//     header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
+//     header( 'Access-Control-Allow-Credentials: true' );
+//     header( 'Access-Control-Allow-Headers: Authorization, Content-Type' );
+//     }
+
+//     return $result;
+// }
+
+
+
 add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
 
 function jwt_authenticate_for_rest_requests($result, $server, $request) {
     if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
-        $headers = $request->get_headers();
 
-        if (!isset($headers['wp-jwt'])) {
+        if (!isset($_COOKIE['jwt_token'])) {
             return new WP_Error(
                 'jwt_auth_no_auth_header',
-                'Authorization header not found.',
+                'Authorization cookie not found.',
                 array(
                     'status' => 403,
                 )
             );
         }
 
-        $token = $headers['wp-jwt'];
+        $token = $_COOKIE['jwt_token'];
 
         if (!$token) {
             return new WP_Error(
                 'jwt_auth_bad_auth_header',
-                'Authorization header malformed.',
+                'Authorization cookie malformed.',
                 array(
                     'status' => 403,
                 )
@@ -465,6 +527,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
                 )
             );
         }
+
     header( 'Access-Control-Allow-Origin: *' );
     header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
     header( 'Access-Control-Allow-Credentials: true' );
@@ -473,6 +536,3 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
 
     return $result;
 }
-
-
-
