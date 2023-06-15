@@ -495,10 +495,10 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
         $authHeader = $headers['Authorization'];
         $token = str_replace('Bearer ', '', $authHeader); 
 
-        if (!$token) {
+        if ($token) {
             return new WP_Error(
                 'jwt_auth_bad_auth_header',
-                'Authorization cookie malformed.',
+                'Authorization cookie malformed. ' . json_encode($token),
                 array(
                     'status' => 403,
                 )
