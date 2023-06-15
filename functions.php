@@ -417,7 +417,7 @@ function restrict_documenten_rest_api_to_logged_in_users($result, $server, $requ
     $token = getallheaders()['wp-jwt'];
     $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false;
     $user = JWT::decode($token, $secret_key, array('HS256'));
-    if (strpos($request->get_route(), '/wp/v2/documenten') !== false && !isset($user->data->user->id)) {
+    if (strpos($request->get_route(), '/wp-json/wp/v2/documenten') !== false && !isset($user->data->user->id)) {
         return new WP_Error(
             'rest_not_logged_in',
             'You must be logged in to access the REST API.',
