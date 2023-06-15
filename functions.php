@@ -465,9 +465,10 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
                 )
             );
         }
-             header("Access-Control-Allow-Origin: http://localhost:3000");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-        header("Access-Control-Allow-Headers: Authorization, Content-Type");
+    header( 'Access-Control-Allow-Origin: http://localhost:3000' );
+    header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
+    header( 'Access-Control-Allow-Credentials: true' );
+    header( 'Access-Control-Allow-Headers: Authorization, Content-Type' );
     }
 
     return $result;
