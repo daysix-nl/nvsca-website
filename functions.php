@@ -505,30 +505,30 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
             );
         }
 
-        // // Here replace this with your secret key. It's better to store this in your wp-config.php file.
-        // $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+        // Here replace this with your secret key. It's better to store this in your wp-config.php file.
+        $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
 
-        // try {
-        //     $user = JWT::decode($token, $secret_key, array('HS256'));
+        try {
+            $user = JWT::decode($token, $secret_key, array('HS256'));
 
-        //     if (!isset($user->data->user->id)) {
-        //         return new WP_Error(
-        //             'jwt_auth_invalid_token',
-        //             'Invalid token.',
-        //             array(
-        //                 'status' => 403,
-        //             )
-        //         );
-        //     }
-        // } catch(Exception $e) {
-        //     return new WP_Error(
-        //         'jwt_auth_invalid_token',
-        //         'Invalid token.',
-        //         array(
-        //             'status' => 403,
-        //         )
-        //     );
-        // }
+            if (!isset($user->data->user->id)) {
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
+        } catch(Exception $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
 
     header( 'Access-Control-Allow-Origin: *' );
     header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
