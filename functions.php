@@ -425,7 +425,7 @@ function restrict_documenten_rest_api_to_logged_in_users($result, $server, $requ
             );
         }
 
-        $token = explode(' ', getallheaders()['Authorization'])[1];
+        $token = getallheaders()['wp-jwt'];
         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false;
         $user = JWT::decode($token, $secret_key, array('HS256'));
 
