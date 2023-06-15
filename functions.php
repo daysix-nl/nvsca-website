@@ -415,28 +415,30 @@ add_filter(
 
 function restrict_documenten_rest_api_to_logged_in_users($result, $server, $request) {
     if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
-        // if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {
-        //     return new WP_Error(
-        //         'jwt_auth_no_auth_header',
-        //         'Authorization header not found.',
-        //         array(
-        //             'status' => 403,
-        //         )
-        //     );
-        // }
+        if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            return rest_ensure_response(new WP_Error(
+                'jwt_auth_no_auth_header',
+                'Authorization header not found.',
+                array('status' => 403)))
+                ->set_headers(array(
+                    'Access-Control-Allow-Origin' => '*', 
+                    'Access-Control-Allow-Headers' => 'wp-jwt'
+                ));
+        }
 
         $token = getallheaders()['wp-jwt'];
         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false;
         $user = JWT::decode($token, $secret_key, array('HS256'));
 
         if (!isset($user->data->user->id)) {
-            return new WP_Error(
+            return rest_ensure_response(new WP_Error(
                 'jwt_auth_invalid_token',
                 'Invalid token.',
-                array(
-                    'status' => 403,
-                )
-            );
+                array('status' => 403)))
+                ->set_headers(array(
+                    'Access-Control-Allow-Origin' => '*', 
+                    'Access-Control-Allow-Headers' => 'wp-jwt'
+                ));
         }
     }
 
@@ -444,4 +446,5 @@ function restrict_documenten_rest_api_to_logged_in_users($result, $server, $requ
 }
 
 add_filter('rest_pre_dispatch', 'restrict_documenten_rest_api_to_logged_in_users', 10, 3);
+
 
