@@ -413,16 +413,6 @@ add_filter(
 );
 
 
-
-function add_cors_http_header(){
-    header("Access-Control-Allow-Origin: http://localhost:3000");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-    header("Access-Control-Allow-Headers: Authorization, Content-Type");
-}
-add_action('init','add_cors_http_header');
-
-
-
 add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
 
 function jwt_authenticate_for_rest_requests($result, $server, $request) {
@@ -475,6 +465,9 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
                 )
             );
         }
+             header("Access-Control-Allow-Origin: http://localhost:3000");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+        header("Access-Control-Allow-Headers: Authorization, Content-Type");
     }
 
     return $result;
