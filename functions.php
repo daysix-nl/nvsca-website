@@ -481,7 +481,8 @@ add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
 function jwt_authenticate_for_rest_requests($result, $server, $request) {
     if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
         $headers = getallheaders();
-
+        $authHeader = $headers['Authorization'];
+        $token = str_replace('Bearer ', '', $authHeader); 
                 // Here replace this with your secret key. It's better to store this in your wp-config.php file.
         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
        $user = JWT::decode($token, $secret_key, array('HS256'));
@@ -495,8 +496,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
             );
         }
 
-        $authHeader = $headers['Authorization'];
-        $token = str_replace('Bearer ', '', $authHeader); 
+
 
         if (!$token) {
             return new WP_Error(
