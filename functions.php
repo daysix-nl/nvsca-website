@@ -481,11 +481,12 @@ add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
 function jwt_authenticate_for_rest_requests($result, $server, $request) {
     if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
         $headers = getallheaders();
-  $authHeader = $headers['Authorization'];
+
+        if (isset($headers['Authorization'])) {
+              $authHeader = $headers['Authorization'];
         $token = str_replace('Bearer ', '', $authHeader); 
                 $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
                  $user = JWT::decode($token, $secret_key, array('HS256'));
-        if (isset($headers['Authorization'])) {
             return new WP_Error(
                 'jwt_auth_no_auth_header',
                 'Authorization header not found. Headers: ' . json_encode($user),
