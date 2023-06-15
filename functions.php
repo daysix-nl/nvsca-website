@@ -482,10 +482,12 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
     if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
         $headers = getallheaders();
 
+             $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+
         if (!isset($headers['Authorization'])) {
             return new WP_Error(
                 'jwt_auth_no_auth_header',
-                'Authorization header not found. Headers: ' . json_encode($headers),
+                'Authorization header not found. Headers: ' . json_encode($secret_key),
                 array(
                     'status' => 403,
                 )
@@ -506,7 +508,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
         }
 
         // Here replace this with your secret key. It's better to store this in your wp-config.php file.
-        $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+   
 
         try {
             $user = JWT::decode($token, $secret_key, array('HS256'));
