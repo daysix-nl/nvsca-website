@@ -580,12 +580,12 @@ function create_custom_post_type($singular_name, $plural_name) {
     register_post_type(strtolower($singular_name), $args);
 }
 
-function add_rest_support($post_type) {
-    global $wp_post_types;
-    $wp_post_types[$post_type]->show_in_rest = true;
-    $wp_post_types[$post_type]->rest_base = $post_type;
-    $wp_post_types[$post_type]->rest_controller_class = 'WP_REST_Posts_Controller';
-}
+// function add_rest_support($post_type) {
+//     global $wp_post_types;
+//     $wp_post_types[$post_type]->show_in_rest = true;
+//     $wp_post_types[$post_type]->rest_base = $post_type;
+//     $wp_post_types[$post_type]->rest_controller_class = 'WP_REST_Posts_Controller';
+// }
 
 function jwt_authenticate_for_rest_requests($result, $server, $request, $required_roles) {
     $headers = getallheaders();
@@ -689,10 +689,10 @@ function create_custom_post_type_with_jwt($singular_name, $plural_name, $require
         return $result;
     }, 10, 3);
 
-    // Setup REST support
-    add_action('init', function() use ($singular_name) {
-        add_rest_support(strtolower($singular_name));
-    }, 30);
+    // // Setup REST support
+    // add_action('init', function() use ($singular_name) {
+    //     add_rest_support(strtolower($singular_name));
+    // }, 30);
 }
 
 // Usage:
