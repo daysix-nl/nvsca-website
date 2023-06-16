@@ -573,6 +573,7 @@ function create_custom_post_type($singular_name, $plural_name) {
         'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
         'taxonomies' => array('category', 'post_tag'),
         'menu_icon' => 'dashicons-media-text',
+        'show_in_rest' => $show_in_rest,
     );
 
     // Register the post type
@@ -675,7 +676,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request, $require
 
 function create_custom_post_type_with_jwt($singular_name, $plural_name, $required_role) {
     // Call the function to create the post type
-    create_custom_post_type($singular_name, $plural_name);
+  create_custom_post_type($singular_name, $plural_name, true);
 
     // Setup JWT authentication
     add_filter('rest_pre_dispatch', function ($result, $server, $request) use ($singular_name, $required_role) {
@@ -691,7 +692,7 @@ function create_custom_post_type_with_jwt($singular_name, $plural_name, $require
     // Setup REST support
     add_action('init', function() use ($singular_name) {
         add_rest_support(strtolower($singular_name));
-    }, 30); // increased from 25 to 30
+    }, 30);
 }
 
 // Usage:
