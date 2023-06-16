@@ -586,7 +586,7 @@ function add_rest_support($post_type) {
     $wp_post_types[$post_type]->rest_controller_class = 'WP_REST_Posts_Controller';
 }
 
-function jwt_authenticate_for_rest_requests($result, $server, $request, $required_role) {
+function jwt_authenticate_for_rest_requests($result, $server, $request, $required_roles) {
         $headers = getallheaders();
 
         if (!isset($headers['Authorization'])) {
