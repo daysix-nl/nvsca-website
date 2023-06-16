@@ -12,6 +12,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\ExpiredException;
+use Firebase\JWT\SignatureInvalidException;
+use Firebase\JWT\BeforeValidException;
 
 /*
 |--------------------------------------------------------------------------
@@ -525,6 +527,22 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
                     )
                 );
             }
+        } catch (SignatureInvalidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }  catch (BeforeValidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
         } catch (ExpiredException $e) {
             return new WP_Error(
                 'jwt_auth_invalid_token',
