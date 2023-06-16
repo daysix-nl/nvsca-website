@@ -11,12 +11,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Firebase\JWT\SignatureInvalidException;
-use Firebase\JWT\BeforeValidException;
-use Firebase\JWT\ExpiredException;
-use DomainException;
-use InvalidArgumentException;
-use UnexpectedValueException;
+
 /*
 |--------------------------------------------------------------------------
 | Front-end styles en scripts
@@ -456,37 +451,19 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
 
         try {
-            $user = JWT::decode($token, $secret_key, ['HS256']);
+            $user = JWT::decode($token, new Key($secret_key, 'HS256'));
+            
 
-            // Validate user data
             if (!isset($user->data->user->id)) {
-                throw new Exception('Invalid user data in the token.');
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
             }
-        } catch (ExpiredException $e) {
-            return new WP_Error(
-                'jwt_auth_expired_token',
-                'Expired token.',
-                array(
-                    'status' => 403,
-                )
-            );
-        } catch (SignatureInvalidException $e) {
-            return new WP_Error(
-                'jwt_auth_invalid_signature',
-                'Invalid token signature.',
-                array(
-                    'status' => 403,
-                )
-            );
-        } catch (UnexpectedValueException $e) {
-            return new WP_Error(
-                'jwt_auth_bad_request',
-                'Bad request.',
-                array(
-                    'status' => 400,
-                )
-            );
-        } catch(\Exception $e) {
+        } catch(Exception $e) {
             return new WP_Error(
                 'jwt_auth_invalid_token',
                 'Invalid token.',
