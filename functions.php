@@ -14,6 +14,9 @@ use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
+use DomainException;
+use InvalidArgumentException;
+use UnexpectedValueException;
 /*
 |--------------------------------------------------------------------------
 | Front-end styles en scripts
