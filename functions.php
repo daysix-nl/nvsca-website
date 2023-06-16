@@ -11,6 +11,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Firebase\JWT\ExpiredException;
+use Firebase\JWT\BeforeValidException;
 
 /*
 |--------------------------------------------------------------------------
@@ -463,6 +465,24 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
                     )
                 );
             }
+        } catch(BeforeValidException $e) {
+            return new WP_Error(
+                'jwt_auth_expired_token',
+                'Expired token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
+        } catch(ExpiredException $e) {
+            return new WP_Error(
+                'jwt_auth_expired_token',
+                'Expired token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
         } catch(Exception $e) {
             return new WP_Error(
                 'jwt_auth_invalid_token',
@@ -473,10 +493,10 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
             );
         }
 
-    header( 'Access-Control-Allow-Origin: *' );
-    header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
-    header( 'Access-Control-Allow-Credentials: true' );
-    header( 'Access-Control-Allow-Headers: Authorization, Content-Type' );
+        header( 'Access-Control-Allow-Origin: *' );
+        header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
+        header( 'Access-Control-Allow-Credentials: true' );
+        header( 'Access-Control-Allow-Headers: Authorization, Content-Type' );
     }
 
     return $result;
