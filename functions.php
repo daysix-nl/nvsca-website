@@ -347,54 +347,54 @@ add_action('init', 'add_event_rest_support', 25);
 | 
 |
 */
-// function create_document_post_type()
-// {
-//     // Labels for the post type
-//     $labels = array(
-//         'name' => __('Documenten'),
-//         'singular_name' => __('Document'),
-//         'menu_name' => __('Documenten'),
-//         'add_new' => __('Add New'),
-//         'add_new_item' => __('Add New Document'),
-//         'edit_item' => __('Edit Document'),
-//         'new_item' => __('New Document'),
-//         'view_item' => __('View Document'),
-//         'search_items' => __('Search Documenten'),
-//         'not_found' => __('No documents found'),
-//         'not_found_in_trash' => __('No documents found in Trash'),
-//         'all_items' => __('All Documenten'),
-//     );
-//     // Options for the post type
-//     $args = array(
-//         'labels' => $labels,
-//         'public' => true,
-//         'publicly_queryable' => true,
-//         'show_ui' => true,
-//         'show_in_menu' => true,
-//         'query_var' => true,
-//         'rewrite' => array('slug' => 'document'),
-//         'capability_type' => 'post',
-//         'has_archive' => true,
-//         'hierarchical' => false,
-//         'menu_position' => 5,
-//         'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
-//         'taxonomies' => array('category', 'post_tag'),
-//         'menu_icon' => 'dashicons-media-text',
-//     );
+function create_document_post_type()
+{
+    // Labels for the post type
+    $labels = array(
+        'name' => __('Documenten'),
+        'singular_name' => __('Document'),
+        'menu_name' => __('Documenten'),
+        'add_new' => __('Add New'),
+        'add_new_item' => __('Add New Document'),
+        'edit_item' => __('Edit Document'),
+        'new_item' => __('New Document'),
+        'view_item' => __('View Document'),
+        'search_items' => __('Search Documenten'),
+        'not_found' => __('No documents found'),
+        'not_found_in_trash' => __('No documents found in Trash'),
+        'all_items' => __('All Documenten'),
+    );
+    // Options for the post type
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'publicly_queryable' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'document'),
+        'capability_type' => 'post',
+        'has_archive' => true,
+        'hierarchical' => false,
+        'menu_position' => 5,
+        'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
+        'taxonomies' => array('category', 'post_tag'),
+        'menu_icon' => 'dashicons-media-text',
+    );
 
-//     // Register the post type
-//     register_post_type('document', $args);
-// }
-// add_action('init', 'create_document_post_type');
+    // Register the post type
+    register_post_type('document', $args);
+}
+add_action('init', 'create_document_post_type');
 
-// function add_document_rest_support()
-// {
-//     global $wp_post_types;
-//     $wp_post_types['document']->show_in_rest = true;
-//     $wp_post_types['document']->rest_base = 'documenten';
-//     $wp_post_types['document']->rest_controller_class = 'WP_REST_Posts_Controller';
-// }
-// add_action('init', 'add_document_rest_support', 25);
+function add_document_rest_support()
+{
+    global $wp_post_types;
+    $wp_post_types['document']->show_in_rest = true;
+    $wp_post_types['document']->rest_base = 'documenten';
+    $wp_post_types['document']->rest_controller_class = 'WP_REST_Posts_Controller';
+}
+add_action('init', 'add_document_rest_support', 25);
 
 /*
 |--------------------------------------------------------------------------
@@ -455,140 +455,10 @@ add_filter(
 | 
 |
 */
-// add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
+add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
 
-// function jwt_authenticate_for_rest_requests($result, $server, $request) {
-//     if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
-//         $headers = getallheaders();
-
-//         if (!isset($headers['Authorization'])) {
-//             return new WP_Error(
-//                 'jwt_auth_no_auth_header',
-//                 'Authorization header not found. Headers: ' . json_encode($headers),
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
-
-//         $authHeader = $headers['Authorization'];
-//         $token = str_replace('Bearer ', '', $authHeader); 
-
-//         if (!$token) {
-//             return new WP_Error(
-//                 'jwt_auth_bad_auth_header',
-//                 'Authorization cookie malformed.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
-
-//         // Here replace this with your secret key. It's better to store this in your wp-config.php file.
-//         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
-
-//         try {
-//             $user = JWT::decode($token, new Key($secret_key, 'HS256'));
-            
-//             if (!isset($user->data->user->id)) {
-//                 return new WP_Error(
-//                     'jwt_auth_invalid_token',
-//                     'Invalid token.',
-//                     array(
-//                         'status' => 403,
-//                     )
-//                 );
-//             }
-//         } catch (SignatureInvalidException $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }  catch (BeforeValidException $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         } catch (ExpiredException $e) {
-//             return new WP_Error(
-//                     'jwt_auth_expired_token',
-//                     'Expired token.',
-//                     array(
-//                         'status' => 403,
-//                     )
-//                 );
-//         }
-//         catch(Exception $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
-
-//     }
-
-//     return $result;
-// }
-
-
-function create_custom_post_type($singular_name, $plural_name) {
-    // Labels for the post type
-    $labels = array(
-        'name' => __($plural_name),
-        'singular_name' => __($singular_name),
-        'menu_name' => __($plural_name),
-        'add_new' => __('Add New'),
-        'add_new_item' => __('Add New ' . $singular_name),
-        'edit_item' => __('Edit ' . $singular_name),
-        'new_item' => __('New ' . $singular_name),
-        'view_item' => __('View ' . $singular_name),
-        'search_items' => __('Search ' . $plural_name),
-        'not_found' => __('No ' . strtolower($plural_name) . ' found'),
-        'not_found_in_trash' => __('No ' . strtolower($plural_name) . ' found in Trash'),
-        'all_items' => __('All ' . $plural_name),
-    );
-
-    // Options for the post type
-    $args = array(
-        'labels' => $labels,
-        'public' => true,
-        'publicly_queryable' => true,
-        'show_ui' => true,
-        'show_in_menu' => true,
-        'query_var' => true,
-        'rewrite' => array('slug' => strtolower($singular_name)),
-        'capability_type' => 'post',
-        'has_archive' => true,
-        'hierarchical' => false,
-        'menu_position' => 5,
-        'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
-        'taxonomies' => array('category', 'post_tag'),
-        'menu_icon' => 'dashicons-media-text',
-    );
-
-    // Register the post type
-    register_post_type(strtolower($singular_name), $args);
-}
-
-function add_rest_support($post_type) {
-    global $wp_post_types;
-    $wp_post_types[$post_type]->show_in_rest = true;
-    $wp_post_types[$post_type]->rest_base = $post_type;
-    $wp_post_types[$post_type]->rest_controller_class = 'WP_REST_Posts_Controller';
-}
-
-function jwt_authenticate_for_rest_requests($result, $server, $request, $required_role) {
-        $headers = getallheaders();
-
+function jwt_authenticate_for_rest_requests($result, $server, $request) {
+    if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
         $headers = getallheaders();
 
         if (!isset($headers['Authorization'])) {
@@ -663,28 +533,8 @@ function jwt_authenticate_for_rest_requests($result, $server, $request, $require
                 )
             );
         }
+
+    }
+
+    return $result;
 }
-
-function create_custom_post_type_with_jwt($singular_name, $plural_name, $required_role) {
-    // Call the function to create the post type
-    create_custom_post_type($singular_name, $plural_name);
-
-    // Setup JWT authentication
-    add_filter('rest_pre_dispatch', function ($result, $server, $request) use ($singular_name, $required_role) {
-        // Check if the request is for our custom post type
-        if (strpos($request->get_route(), '/wp/v2/' . strtolower($singular_name)) !== false) {
-            return jwt_authenticate_for_rest_requests($result, $server, $request, $required_role);
-        }
-
-        // If the request is not for our custom post type, return the original result
-        return $result;
-    }, 10, 3);
-
-    // Setup REST support
-    add_action('init', function() use ($singular_name) {
-        add_rest_support(strtolower($singular_name));
-    }, 25);
-}
-
-// Usage:
-create_custom_post_type_with_jwt('Document', 'Documenten', 'admin');
