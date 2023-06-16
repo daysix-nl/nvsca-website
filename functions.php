@@ -722,13 +722,7 @@ function my_rest_pre_dispatcha($response, $server, $request) {
                 );
             }
 
-            // Check if role is provided in the request
-            if (isset($_POST['role'])) {
-                // Save the role as post meta data
-                add_action('add_attachment', function($post_ID) {
-                    update_post_meta($post_ID, 'role', $_POST['role']);
-                });
-            }
+    
         } catch (SignatureInvalidException $e) {
             return new WP_Error(
                 'jwt_auth_invalid_token',
