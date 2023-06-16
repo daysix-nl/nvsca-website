@@ -691,7 +691,7 @@ function create_custom_post_type_with_jwt($singular_name, $plural_name, $require
     // Setup REST support
     add_action('init', function() use ($singular_name) {
         add_rest_support(strtolower($singular_name));
-    }, 25);
+    }, 30); // increased from 25 to 30
 }
 
 // Usage:
