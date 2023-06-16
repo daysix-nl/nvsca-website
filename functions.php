@@ -549,9 +549,9 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
 }
 
 
-add_filter('rest_pre_dispatch', 'my_rest_pre_dispatch', 10, 3);
+add_filter('rest_pre_dispatch', 'my_rest_pre_dispatchb', 10, 3);
 
-function my_rest_pre_dispatch($response, $server, $request) {
+function my_rest_pre_dispatchb($response, $server, $request) {
     if ($request->get_method() === 'POST' && strpos($request->get_route(), '/wp/v2/media') !== false) {
 
 
@@ -653,9 +653,9 @@ function my_rest_pre_dispatch($response, $server, $request) {
 }
 
 
-add_filter('rest_pre_dispatch', 'my_rest_pre_dispatch', 10, 3);
+add_filter('rest_pre_dispatch', 'my_rest_pre_dispatcha', 10, 3);
 
-function my_rest_pre_dispatch($response, $server, $request) {
+function my_rest_pre_dispatcha($response, $server, $request) {
     if ($request->get_method() === 'GET' && strpos($request->get_route(), '/wp/v2/media') !== false) {
 
 
