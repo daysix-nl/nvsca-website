@@ -511,7 +511,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
 
  
-            // $user = JWT::decode($token, new Key($secret_key, 'HS256'));
+        $user = JWT::decode($token, $secret_key, ['HS256']);
         
             // if (isset($user)) {
             //     return new WP_Error(
