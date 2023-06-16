@@ -573,53 +573,88 @@ function create_custom_post_type($singular_name, $plural_name) {
         'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
         'taxonomies' => array('category', 'post_tag'),
         'menu_icon' => 'dashicons-media-text',
-        'show_in_rest' => $show_in_rest,
     );
 
     // Register the post type
     register_post_type(strtolower($singular_name), $args);
 }
 
-// function add_rest_support($post_type) {
-//     global $wp_post_types;
-//     $wp_post_types[$post_type]->show_in_rest = true;
-//     $wp_post_types[$post_type]->rest_base = $post_type;
-//     $wp_post_types[$post_type]->rest_controller_class = 'WP_REST_Posts_Controller';
-// }
+function add_rest_support($post_type) {
+    global $wp_post_types;
+    $wp_post_types[$post_type]->show_in_rest = true;
+    $wp_post_types[$post_type]->rest_base = $post_type;
+    $wp_post_types[$post_type]->rest_controller_class = 'WP_REST_Posts_Controller';
+}
 
-function jwt_authenticate_for_rest_requests($result, $server, $request, $required_roles) {
-    $headers = getallheaders();
+function jwt_authenticate_for_rest_requests($result, $server, $request, $required_role) {
+        $headers = getallheaders();
 
-    if (!isset($headers['Authorization'])) {
-        return new WP_Error(
-            'jwt_auth_no_auth_header',
-            'Authorization header not found. Headers',
-            array(
-                'status' => 403,
-            )
-        );
-    }
+        $headers = getallheaders();
 
-    $authHeader = $headers['Authorization'];
-    $token = str_replace('Bearer ', '', $authHeader); 
+        if (!isset($headers['Authorization'])) {
+            return new WP_Error(
+                'jwt_auth_no_auth_header',
+                'Authorization header not found. Headers: ' . json_encode($headers),
+                array(
+                    'status' => 403,
+                )
+            );
+        }
 
-    if (!$token) {
-        return new WP_Error(
-            'jwt_auth_bad_auth_header',
-            'Authorization cookie malformed.',
-            array(
-                'status' => 403,
-            )
-        );
-    }
+        $authHeader = $headers['Authorization'];
+        $token = str_replace('Bearer ', '', $authHeader); 
 
-    // Here replace this with your secret key. It's better to store this in your wp-config.php file.
-    $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+        if (!$token) {
+            return new WP_Error(
+                'jwt_auth_bad_auth_header',
+                'Authorization cookie malformed.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
 
-    try {
-        $user = JWT::decode($token, new Key($secret_key, 'HS256'));
-        
-        if (!isset($user->data->user->id)) {
+        // Here replace this with your secret key. It's better to store this in your wp-config.php file.
+        $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+
+        try {
+            $user = JWT::decode($token, new Key($secret_key, 'HS256'));
+            
+            if (!isset($user->data->user->id)) {
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
+        } catch (SignatureInvalidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }  catch (BeforeValidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        } catch (ExpiredException $e) {
+            return new WP_Error(
+                    'jwt_auth_expired_token',
+                    'Expired token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+        }
+        catch(Exception $e) {
             return new WP_Error(
                 'jwt_auth_invalid_token',
                 'Invalid token.',
@@ -628,55 +663,11 @@ function jwt_authenticate_for_rest_requests($result, $server, $request, $require
                 )
             );
         }
-        
-        if (!isset($user->data->user->role) || !in_array($user->data->user->role, $required_roles)) {
-            return new WP_Error(
-                'jwt_auth_invalid_token',
-                'Invalid token.',
-                array(
-                    'status' => 403,
-                )
-            );
-        }
-    } catch (SignatureInvalidException $e) {
-        return new WP_Error(
-            'jwt_auth_invalid_token',
-            'Invalid token.',
-            array(
-                'status' => 403,
-            )
-        );
-    }  catch (BeforeValidException $e) {
-        return new WP_Error(
-            'jwt_auth_invalid_token',
-            'Invalid token.',
-            array(
-                'status' => 403,
-            )
-        );
-    } catch (ExpiredException $e) {
-        return new WP_Error(
-                'jwt_auth_expired_token',
-                'Expired token.',
-                array(
-                    'status' => 403,
-                )
-            );
-    }
-    catch(Exception $e) {
-        return new WP_Error(
-            'jwt_auth_invalid_token',
-            'Invalid token.',
-            array(
-                'status' => 403,
-            )
-        );
-    }
 }
 
 function create_custom_post_type_with_jwt($singular_name, $plural_name, $required_role) {
     // Call the function to create the post type
-  create_custom_post_type($singular_name, $plural_name, true);
+    create_custom_post_type($singular_name, $plural_name);
 
     // Setup JWT authentication
     add_filter('rest_pre_dispatch', function ($result, $server, $request) use ($singular_name, $required_role) {
@@ -689,12 +680,11 @@ function create_custom_post_type_with_jwt($singular_name, $plural_name, $require
         return $result;
     }, 10, 3);
 
-    // // Setup REST support
-    // add_action('init', function() use ($singular_name) {
-    //     add_rest_support(strtolower($singular_name));
-    // }, 30);
+    // Setup REST support
+    add_action('init', function() use ($singular_name) {
+        add_rest_support(strtolower($singular_name));
+    }, 25);
 }
 
 // Usage:
-create_custom_post_type_with_jwt('Document', 'Documenten', ['admin', 'editor']);
-create_custom_post_type_with_jwt('Document-Jaarverslagen', 'Documenten-Jaarverslagen', ['admin', 'editor']);
+create_custom_post_type_with_jwt('Document', 'Documenten', 'admin');
