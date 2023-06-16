@@ -1,0 +1,17 @@
+{
+    "name": "svennijhuis/nvsca-website",
+    "autoload": {
+        "psr-4": {
+            "Svennijhuis\\NvscaWebsite\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "svennijhuis",
+            "email": "sanijhuis@live.nl"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^6.7"
+    }
+}

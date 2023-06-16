@@ -7,7 +7,9 @@
 * 
 * @package Day Six theme
 */
+require_once __DIR__ . '/vendor/autoload.php';
 
+use \Firebase\JWT\JWT;
 
 /*
 |--------------------------------------------------------------------------
@@ -475,8 +477,8 @@ add_filter(
 // }
 
 
-require './libraries/php-jwt-main/src/JWT.php';
-use \Firebase\JWT\JWT;
+// require './libraries/php-jwt-main/src/JWT.php';
+// use \Firebase\JWT\JWT;
 
 add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
 
