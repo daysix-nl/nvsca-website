@@ -17,6 +17,12 @@ use Firebase\JWT\BeforeValidException;
 
 function add_cors_http_header(){
     header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE"); // Modify this line with your needed methods
+    header("Access-Control-Allow-Headers: Content-Type, X-Auth-Token, Origin, Authorization"); // Modify this line with your needed headers
+
+    if ('OPTIONS' == $_SERVER['REQUEST_METHOD']) {
+        exit(0);
+    }
 }
 add_action('init','add_cors_http_header');
 
