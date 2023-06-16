@@ -627,7 +627,8 @@ function jwt_authenticate_for_rest_requests($result, $server, $request, $require
                     )
                 );
             }
-            if (!isset($user->data->user->role) ||  !in_array($user->data->user->role, $required_roles) {
+            
+            if (!isset($user->data->user->role) || !in_array($user->data->user->role, $required_roles) {
                 return new WP_Error(
                     'jwt_auth_invalid_token',
                     'Invalid token.',
@@ -670,7 +671,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request, $require
                 )
             );
         }
-   
+    }
 }
 
 function create_custom_post_type_with_jwt($singular_name, $plural_name, $required_role) {
@@ -695,5 +696,5 @@ function create_custom_post_type_with_jwt($singular_name, $plural_name, $require
 }
 
 // Usage:
-create_custom_post_type_with_jwt('Document', 'Documenten', , ['admin', 'editor']);
-create_custom_post_type_with_jwt('Document-Jaarverslagen', 'Documenten-Jaarverslagen', , ['admin', 'editor']);
+create_custom_post_type_with_jwt('Document', 'Documenten', ['admin', 'editor']);
+create_custom_post_type_with_jwt('Document-Jaarverslagen', 'Documenten-Jaarverslagen', ['admin', 'editor']);
