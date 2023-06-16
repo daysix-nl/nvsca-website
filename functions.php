@@ -513,15 +513,15 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
  
             $user = JWT::decode($token, new Key($secret_key, 'HS256'));
         
-            if (isset($user)) {
-                return new WP_Error(
-                    'jwt_auth_invalid_token: ' . json_encode($user),
-                    'Invalid token.',
-                    array(
-                        'status' => 403,
-                    )
-                );
-            }
+            // if (isset($user)) {
+            //     return new WP_Error(
+            //         'jwt_auth_invalid_token: ' . json_encode($user),
+            //         'Invalid token.',
+            //         array(
+            //             'status' => 403,
+            //         )
+            //     );
+            // }
   
             
 
