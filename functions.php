@@ -474,15 +474,15 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
                 )
             );
         }
-        } catch(ExpiredException $e) {
-            return new WP_Error(
-                'jwt_auth_expired_token',
-                'Expired token.',
-                array(
-                    'status' => 403,
-                )
-            );
-        }
+        // } catch(ExpiredException $e) {
+        //     return new WP_Error(
+        //         'jwt_auth_expired_token',
+        //         'Expired token.',
+        //         array(
+        //             'status' => 403,
+        //         )
+        //     );
+        // }
         } catch(Exception $e) {
             return new WP_Error(
                 'jwt_auth_invalid_token',
