@@ -499,6 +499,15 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
                     )
                 );
             }
+            if (!isset($user->data->user->role) || $user->data->user->role === 'admin') {
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
         } catch (SignatureInvalidException $e) {
             return new WP_Error(
                 'jwt_auth_invalid_token',
