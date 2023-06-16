@@ -16,9 +16,20 @@ use Firebase\JWT\SignatureInvalidException;
 use Firebase\JWT\BeforeValidException;
 
 function add_cors_http_header(){
-    header("Access-Control-Allow-Origin: *");
+    $origin = $_SERVER['HTTP_ORIGIN'];
+
+    $allowed_domains = [
+        'http://localhost:3000',
+        // add any other domains you want to allow here
+    ];
+
+    if (in_array($origin, $allowed_domains)) {
+        header("Access-Control-Allow-Origin: $origin");
+    }
+
     header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE"); // Modify this line with your needed methods
     header("Access-Control-Allow-Headers: Content-Type, X-Auth-Token, Origin, Authorization"); // Modify this line with your needed headers
+    header("Access-Control-Allow-Credentials: true");
 
     if ('OPTIONS' == $_SERVER['REQUEST_METHOD']) {
         exit(0);
