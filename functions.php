@@ -709,8 +709,6 @@ function my_rest_pre_dispatch($response, $server, $request) {
 
             // Get the ID of the media item, which is the last part of the route
             $media_id = end($parts);
-
-            $media_id = ...; // Replace with code to get the ID of the requested media item
             $image_role = get_post_meta($media_id, 'image_role', true);
 
                 // Check if the user has the required role
