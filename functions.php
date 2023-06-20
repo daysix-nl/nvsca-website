@@ -751,16 +751,15 @@ function check_role_before_sending_media($prepared_response, $request) {
             // Assuming that the user's role is stored in $user->data->user->role
             $user_role = $user->data->user->role;
             
-            // The roles required to access the media are part of the fetched data, 
-            // we can get them from the 'role' property of the prepared response
-            $media_data = $prepared_response->get_data();
-            $required_roles = $media_data['role'];
+            // Fetch the required roles from the 'role' property of the media object
+            $media_id = $request->get_param('id');
+            $media = get_post($media_id);
+            $required_roles = get_post_meta($media->ID, 'role', false);
 
             // Check if user role is in required roles
             if (!in_array($user_role, $required_roles)) {
                 return new WP_REST_Response('Invalid role.', 403);
             }
-
         } catch (Exception $e) {
             $response->set_status(403);
             $response->set_data(array(
