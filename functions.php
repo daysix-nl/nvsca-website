@@ -712,9 +712,9 @@ function my_rest_pre_dispatchb($response, $server, $request) {
 | 
 |
 */
-add_filter('rest_pre_dispatch', 'check_role_before_sending_media', 10, 3);
+add_filter('rest_pre_dispatch', 'check_role_before_sending_media', 10, 2);
 
-function check_role_before_sending_media($response, $post, $request) {
+function check_role_before_sending_media($prepared_response, $request) {
     if ($request->get_method() === 'GET' && strpos($request->get_route(), '/wp/v2/media') !== false) {
         $headers = getallheaders();
 
