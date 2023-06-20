@@ -558,29 +558,29 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
 | 
 |
 */
-function add_role_field_to_response() {
-    register_rest_field('attachment', 'role', array(
-        'get_callback' => function($data) {
-            return get_post_meta($data['id'], 'role', false); // Use false to get an array
-        },
-        'update_callback' => function($value, $object) {
-            // Delete all previous entries
-            delete_post_meta($object->ID, 'role');
+// function add_role_field_to_response() {
+//     register_rest_field('attachment', 'role', array(
+//         'get_callback' => function($data) {
+//             return get_post_meta($data['id'], 'role', false); // Use false to get an array
+//         },
+//         'update_callback' => function($value, $object) {
+//             // Delete all previous entries
+//             delete_post_meta($object->ID, 'role');
 
-            // Add each new entry
-            foreach ($value as $role) {
-                add_post_meta($object->ID, 'role', sanitize_text_field($role));
-            }
+//             // Add each new entry
+//             foreach ($value as $role) {
+//                 add_post_meta($object->ID, 'role', sanitize_text_field($role));
+//             }
 
-            return get_post_meta($object->ID, 'role');
-        },
-        'schema' => array(
-            'description' => 'Role',
-            'type' => 'array'
-        ),
-    ));
-}
-add_action('rest_api_init', 'add_role_field_to_response');
+//             return get_post_meta($object->ID, 'role');
+//         },
+//         'schema' => array(
+//             'description' => 'Role',
+//             'type' => 'array'
+//         ),
+//     ));
+// }
+// add_action('rest_api_init', 'add_role_field_to_response');
 
 
 
@@ -658,10 +658,10 @@ function my_rest_pre_dispatchb($response, $server, $request) {
                         // Delete all previous entries
                         delete_post_meta($post_ID, 'role');
 
-                        // // Add each new entry
-                        // foreach ($roles as $role) {
-                        //     add_post_meta($post_ID, 'role', $role);
-                        // }
+                        // Add each new entry
+                        foreach ($roles as $role) {
+                            add_post_meta($post_ID, 'role', $role);
+                        }
                     });
                 }
             }
