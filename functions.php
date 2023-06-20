@@ -558,27 +558,35 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
 | 
 |
 */
-// Add a new field to the REST API response
 function add_role_field_to_response() {
     register_rest_field('attachment', 'role', array(
         'get_callback' => function($data) {
-            return get_post_meta($data['id'], 'role', true);
+            return get_post_meta($data['id'], 'role', false); // Use false to get an array
         },
         'update_callback' => function($value, $object) {
-            return update_post_meta($object->ID, 'role', sanitize_text_field($value));
+            // Delete all previous entries
+            delete_post_meta($object->ID, 'role');
+
+            // Add each new entry
+            foreach ($value as $role) {
+                add_post_meta($object->ID, 'role', sanitize_text_field($role));
+            }
+
+            return get_post_meta($object->ID, 'role');
         },
         'schema' => array(
             'description' => 'Role',
-            'type' => 'string'
+            'type' => 'array'
         ),
     ));
 }
 add_action('rest_api_init', 'add_role_field_to_response');
 
 
+
 /*
 |--------------------------------------------------------------------------
-| Check role on media upload
+| Check role on media upload and JWT token for media POST request
 |--------------------------------------------------------------------------
 |
 | 
@@ -642,10 +650,20 @@ function my_rest_pre_dispatchb($response, $server, $request) {
 
             // Check if role is provided in the request
             if (isset($_POST['role'])) {
-                // Save the role as post meta data
-                add_action('add_attachment', function($post_ID) {
-                    update_post_meta($post_ID, 'role', $_POST['role']);
-                });
+                // Decode the JSON string to an array
+                $roles = json_decode(stripslashes($_POST['role']), true);
+
+                if (is_array($roles)) {
+                    add_action('add_attachment', function($post_ID) use ($roles) {
+                        // Delete all previous entries
+                        delete_post_meta($post_ID, 'role');
+
+                        // Add each new entry
+                        foreach ($roles as $role) {
+                            add_post_meta($post_ID, 'role', sanitize_text_field($role));
+                        }
+                    });
+                }
             }
         } catch (SignatureInvalidException $e) {
             return new WP_Error(
@@ -685,6 +703,16 @@ function my_rest_pre_dispatchb($response, $server, $request) {
 
     return $response;
 }
+
+/*
+|--------------------------------------------------------------------------
+| Check role on media upload and GET request
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
 
 
 // add_filter('rest_pre_dispatch', 'my_rest_pre_dispatcha', 10, 3);
