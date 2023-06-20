@@ -759,7 +759,7 @@ function check_role_before_sending_media($response, $post, $request) {
                 );
             }
             
-            if (!isset($user->data->user->role) || $user->data->user->role !== $required_role) {
+            if (!isset($user->data->user->role) || !in_array($user->data->user->role, $required_roles)) {
                 return new WP_Error(
                     'jwt_auth_invalid_role',
                     'Invalid role.',
