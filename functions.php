@@ -665,6 +665,7 @@ function my_rest_pre_dispatchb($response, $server, $request) {
                     });
                 }
             }
+
         } catch (SignatureInvalidException $e) {
             return new WP_Error(
                 'jwt_auth_invalid_token',
