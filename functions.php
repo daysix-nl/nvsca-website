@@ -712,6 +712,7 @@ function my_rest_pre_dispatchb($response, $server, $request) {
 | 
 |
 */
+add_filter('rest_pre_dispatch', 'check_role_before_sending_media', 10, 3);
 
 function check_role_before_sending_media($response, $post, $request) {
     if ($request->get_method() === 'GET' && strpos($request->get_route(), '/wp/v2/media') !== false) {
