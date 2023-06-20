@@ -658,10 +658,10 @@ function my_rest_pre_dispatchb($response, $server, $request) {
                         // Delete all previous entries
                         delete_post_meta($post_ID, 'role');
 
-                        // Add each new entry
-                        foreach ($roles as $role) {
-                            add_post_meta($post_ID, 'role', $role);
-                        }
+                        // // Add each new entry
+                        // foreach ($roles as $role) {
+                        //     add_post_meta($post_ID, 'role', $role);
+                        // }
                     });
                 }
             }
