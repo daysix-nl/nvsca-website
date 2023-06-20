@@ -648,23 +648,46 @@ function my_rest_pre_dispatchb($response, $server, $request) {
                 );
             }
 
-            // Check if role is provided in the request
-            if (isset($_POST['role'])) {
-                // Decode the JSON string to an array
-                $roles = json_decode($_POST['role'], true);
+            // // Check if role is provided in the request
+            // if (isset($_POST['role'])) {
+            //     // Decode the JSON string to an array
+            //     $roles = json_decode($_POST['role'], true);
 
-                if (is_array($roles)) {
-                    add_action('add_attachment', function($post_ID) use ($roles) {
-                        // Delete all previous entries
-                        delete_post_meta($post_ID, 'role');
+            //     if (is_array($roles)) {
+            //         add_action('add_attachment', function($post_ID) use ($roles) {
+            //             // Delete all previous entries
+            //             delete_post_meta($post_ID, 'role');
 
-                        // Add each new entry
-                        foreach ($roles as $role) {
-                            add_post_meta($post_ID, 'role', sanitize_text_field($role));
-                        }
-                    });
-                }
+            //             // Add each new entry
+            //             foreach ($roles as $role) {
+            //                 add_post_meta($post_ID, 'role', sanitize_text_field($role));
+            //             }
+            //         });
+            //     }
+            // }
+            // Get JSON as a string
+$json_str = file_get_contents('php://input');
+
+// Get as an object or array
+$json_obj = json_decode($json_str);
+
+if (isset($json_obj->role)) {
+    // Decode the JSON string to an array
+    $roles = json_decode($json_obj->role, true);
+
+    if (is_array($roles)) {
+        add_action('add_attachment', function($post_ID) use ($roles) {
+            // Delete all previous entries
+            delete_post_meta($post_ID, 'role');
+
+            // Add each new entry
+            foreach ($roles as $role) {
+                add_post_meta($post_ID, 'role', sanitize_text_field($role));
             }
+        });
+    }
+}
+            
 
         } catch (SignatureInvalidException $e) {
             return new WP_Error(
