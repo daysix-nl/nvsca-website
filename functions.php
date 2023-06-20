@@ -747,7 +747,7 @@ function check_role_before_sending_media($response, $post, $request) {
         try {
             $user = JWT::decode($token, new Key($secret_key, 'HS256'));
 
-            $required_role = get_post_meta($post->ID, 'role', true);
+            // $required_role = get_post_meta($post->ID, 'role', true);
 
             if (!isset($user->data->user->id)) {
                 return new WP_Error(
