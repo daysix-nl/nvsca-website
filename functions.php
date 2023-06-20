@@ -742,11 +742,11 @@ function check_role_before_sending_media($response, $handler, $request) {
             );
         }
 
+        // Here replace this with your secret key. It's better to store this in your wp-config.php file.
         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
 
         try {
-
-            $user = JWT::decode($token, $secret_key, array('HS256'));
+            $user = JWT::decode($token, new Key($secret_key, 'HS256'));
 
             if (!isset($user->data->user->id)) {
                 return new WP_Error(
