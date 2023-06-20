@@ -563,16 +563,10 @@ function add_role_field_to_response() {
         'get_callback' => function($data) {
             return get_post_meta($data['id'], 'role', false); // Use false to get an array
         },
-        'update_callback' => function($value, $object) {
-            // Delete all previous entries
-            delete_post_meta($object->ID, 'role');
-
-            // Sanitize each role and add the sanitized array as metadata
-            $roles = array_map('sanitize_text_field', $value);
-            add_post_meta($object->ID, 'role', $roles);
-
-            return get_post_meta($object->ID, 'role', true);
-        },
+'get_callback' => function($data) {
+    $roles = get_post_meta($data['id'], 'role', true);
+    return explode(',', $roles);
+},
         'schema' => array(
             'description' => 'Role',
             'type' => 'array'
@@ -662,7 +656,7 @@ function my_rest_pre_dispatchb($response, $server, $request) {
                         //     add_post_meta($post_ID, 'role', $role);
                         // }
                             $roles_sanitized = array_map('sanitize_text_field', $roles);
-            add_post_meta($post_ID, 'role', $roles_sanitized);
+            add_post_meta($post_ID, 'role', implode(',', $roles_sanitized));
                     });
                 }
             }
