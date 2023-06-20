@@ -712,34 +712,25 @@ function my_rest_pre_dispatchb($response, $server, $request) {
 | 
 |
 */
-add_filter('rest_pre_dispatch', 'check_role_before_sending_media', 10, 2);
+add_filter('rest_request_before_callbacks', 'check_role_before_sending_media', 10, 3);
 
-function check_role_before_sending_media($prepared_response, $request) {
+function check_role_before_sending_media($response, $handler, $request) {
+    // Here $request is a WP_REST_Request object, not a WP_REST_Server
     if ($request->get_method() === 'GET' && strpos($request->get_route(), '/wp/v2/media') !== false) {
-        $headers = getallheaders();
+        $headers = $request->get_headers();
 
-        if (!isset($headers['Authorization'])) {
-            $response->set_status(403);
-            $response->set_data(array(
-                'message' => 'Authorization header not found.',
-                'code' => 'jwt_auth_no_auth_header'
-            ));
-            return $response;
+        if (!isset($headers['authorization'])) {
+            return new WP_REST_Response('Authorization header not found.', 403);
         }
 
-        $authHeader = $headers['Authorization'];
-        $token = str_replace('Bearer ', '', $authHeader); 
+        $authHeader = $headers['authorization'];
+        $token = str_replace('Bearer ', '', $authHeader);
 
         if (!$token) {
-            $response->set_status(403);
-            $response->set_data(array(
-                'message' => 'Authorization cookie malformed.',
-                'code' => 'jwt_auth_bad_auth_header'
-            ));
-            return $response;
+            return new WP_REST_Response('Authorization cookie malformed.', 403);
         }
 
-        $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+        $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false;
 
         try {
             $user = JWT::decode($token, $secret_key, array('HS256'));
