@@ -721,7 +721,7 @@ function check_role_before_sending_media($response, $handler, $request) {
 
         if (!isset($headers['Authorization'])) {
             return new WP_Error(
-                'jwt_auth_invalid_token:' . json_encode($headers),
+                'jwt_auth_invalid_token',
                 'Invalid token.',
                 array(
                     'status' => 403,
@@ -813,4 +813,31 @@ function check_role_before_sending_media($response, $handler, $request) {
     }
 
     return $response;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Options ACF categorieen
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
+
+if( function_exists('acf_add_options_page') ) {
+    
+    acf_add_options_page(array(
+        'page_title'    => 'Theme General Settings',
+        'menu_title'    => 'Theme Settings',
+        'menu_slug'     => 'theme-general-settings',
+        'capability'    => 'edit_posts',
+        'redirect'      => false
+    ));
+    
+    acf_add_options_sub_page(array(
+        'page_title'    => 'Document categorieen',
+        'menu_title'    => 'categorieen',
+        'parent_slug'   => 'theme-general-settings',
+    ));
 }
