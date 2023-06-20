@@ -713,33 +713,29 @@ function my_rest_pre_dispatchb($response, $server, $request) {
 |
 */
 
-add_filter('rest_prepare_attachment', 'check_role_before_sending_media', 10, 3);
-
 function check_role_before_sending_media($response, $post, $request) {
     if ($request->get_method() === 'GET' && strpos($request->get_route(), '/wp/v2/media') !== false) {
         $headers = getallheaders();
 
         if (!isset($headers['Authorization'])) {
-            return new WP_Error(
-                'jwt_auth_no_auth_header',
-                'Authorization header not found.',
-                array(
-                    'status' => 403,
-                )
-            );
+            $response->set_status(403);
+            $response->set_data(array(
+                'message' => 'Authorization header not found.',
+                'code' => 'jwt_auth_no_auth_header'
+            ));
+            return $response;
         }
 
         $authHeader = $headers['Authorization'];
         $token = str_replace('Bearer ', '', $authHeader); 
 
         if (!$token) {
-            return new WP_Error(
-                'jwt_auth_bad_auth_header',
-                'Authorization cookie malformed.',
-                array(
-                    'status' => 403,
-                )
-            );
+            $response->set_status(403);
+            $response->set_data(array(
+                'message' => 'Authorization cookie malformed.',
+                'code' => 'jwt_auth_bad_auth_header'
+            ));
+            return $response;
         }
 
         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
@@ -750,33 +746,30 @@ function check_role_before_sending_media($response, $post, $request) {
             $required_roles = get_post_meta($post->ID, 'role', false);
 
             if (!isset($user->data->user->id)) {
-                return new WP_Error(
-                    'jwt_auth_invalid_token',
-                    'Invalid token.',
-                    array(
-                        'status' => 403,
-                    )
-                );
+                $response->set_status(403);
+                $response->set_data(array(
+                    'message' => 'Invalid token.',
+                    'code' => 'jwt_auth_invalid_token'
+                ));
+                return $response;
             }
             
             if (!isset($user->data->user->role) || !in_array($user->data->user->role, $required_roles)) {
-                return new WP_Error(
-                    'jwt_auth_invalid_role',
-                    'Invalid role.',
-                    array(
-                        'status' => 403,
-                    )
-                );
+                $response->set_status(403);
+                $response->set_data(array(
+                    'message' => 'Invalid role.',
+                    'code' => 'jwt_auth_invalid_role'
+                ));
+                return $response;
             }
 
         } catch (Exception $e) {
-            return new WP_Error(
-                'jwt_auth_invalid_token',
-                'Invalid token.',
-                array(
-                    'status' => 403,
-                )
-            );
+            $response->set_status(403);
+            $response->set_data(array(
+                'message' => 'Invalid token.',
+                'code' => 'jwt_auth_invalid_token'
+            ));
+            return $response;
         }
     }
 
