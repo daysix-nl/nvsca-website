@@ -721,7 +721,7 @@ function check_role_before_sending_media($response, $handler, $request) {
 
         if (!isset($headers['Authorization'])) {
             return new WP_Error(
-                'jwt_auth_invalid_token',
+                'jwt_auth_invalid_token:' . $headers,
                 'Invalid token.',
                 array(
                     'status' => 403,
