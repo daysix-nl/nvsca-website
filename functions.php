@@ -716,7 +716,7 @@ function my_rest_pre_dispatchb($response, $server, $request) {
 add_filter('rest_prepare_attachment', 'check_role_before_sending_media', 10, 3);
 
 function check_role_before_sending_media($response, $post, $request) {
-    if ($request->get_method() === 'GET') {
+    if ($request->get_method() === 'GET' && strpos($request->get_route(), '/wp/v2/media') !== false) {
         $headers = getallheaders();
 
         if (!isset($headers['Authorization'])) {
@@ -759,15 +759,15 @@ function check_role_before_sending_media($response, $post, $request) {
                 );
             }
             
-            if (!isset($user->data->user->role) || !in_array($user->data->user->role, $required_roles)) {
-                return new WP_Error(
-                    'jwt_auth_invalid_role',
-                    'Invalid role.',
-                    array(
-                        'status' => 403,
-                    )
-                );
-            }
+            // if (!isset($user->data->user->role) || !in_array($user->data->user->role, $required_roles)) {
+            //     return new WP_Error(
+            //         'jwt_auth_invalid_role',
+            //         'Invalid role.',
+            //         array(
+            //             'status' => 403,
+            //         )
+            //     );
+            // }
 
         } catch (Exception $e) {
             return new WP_Error(
