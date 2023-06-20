@@ -717,7 +717,7 @@ add_filter('rest_request_before_callbacks', 'check_role_before_sending_media', 1
 function check_role_before_sending_media($response, $handler, $request) {
     // Here $request is a WP_REST_Request object, not a WP_REST_Server
     if ($request->get_method() === 'GET' && strpos($request->get_route(), '/wp/v2/media') !== false) {
-        $headers = $request->get_headers();
+        $headers = getallheaders();
 
         if (!isset($headers['Authorization'])) {
             return new WP_Error(
