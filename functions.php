@@ -747,7 +747,7 @@ function check_role_before_sending_media($response, $post, $request) {
         try {
             $user = JWT::decode($token, new Key($secret_key, 'HS256'));
 
-            // $required_role = get_post_meta($post->ID, 'role', true);
+            $required_roles = get_post_meta($post->ID, 'role', false);
 
             if (!isset($user->data->user->id)) {
                 return new WP_Error(
@@ -759,15 +759,15 @@ function check_role_before_sending_media($response, $post, $request) {
                 );
             }
             
-            // if (!isset($user->data->user->role) || !in_array($user->data->user->role, $required_roles)) {
-            //     return new WP_Error(
-            //         'jwt_auth_invalid_role',
-            //         'Invalid role.',
-            //         array(
-            //             'status' => 403,
-            //         )
-            //     );
-            // }
+            if (!isset($user->data->user->role) || !in_array($user->data->user->role, $required_roles)) {
+                return new WP_Error(
+                    'jwt_auth_invalid_role',
+                    'Invalid role.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
 
         } catch (Exception $e) {
             return new WP_Error(
