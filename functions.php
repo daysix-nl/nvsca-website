@@ -720,24 +720,26 @@ function check_role_before_sending_media($response, $handler, $request) {
         $headers = $request->get_headers();
 
         if (!isset($headers['Authorization'])) {
-            $response->set_status(403);
-            $response->set_data(array(
-                'message' => 'Authorization header not found.',
-                'code' => 'jwt_auth_no_auth_header'
-            ));
-            return $response;
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
         }
 
         $authHeader = $headers['Authorization'];
         $token = str_replace('Bearer ', '', $authHeader); 
 
         if (!$token) {
-            $response->set_status(403);
-            $response->set_data(array(
-                'message' => 'Authorization cookie malformed.',
-                'code' => 'jwt_auth_bad_auth_header'
-            ));
-            return $response;
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
         }
 
         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
@@ -747,7 +749,13 @@ function check_role_before_sending_media($response, $handler, $request) {
             $user = JWT::decode($token, $secret_key, array('HS256'));
 
             if (!isset($user->data->user->id)) {
-                return new WP_REST_Response('Invalid token.', 403);
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
             }
 
             // Assuming that the user's role is stored in $user->data->user->role
@@ -760,15 +768,47 @@ function check_role_before_sending_media($response, $handler, $request) {
 
                // Check if user role is in required roles
             if (!in_array($user_role, $required_roles)) {
-                return new WP_REST_Response('Invalid role.', 403);
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                )
+            );
             }
-        } catch (Exception $e) {
-            $response->set_status(403);
-            $response->set_data(array(
-                'message' => 'Invalid token.',
-                'code' => 'jwt_auth_invalid_token'
-            ));
-            return $response;
+        } catch (SignatureInvalidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }  catch (BeforeValidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        } catch (ExpiredException $e) {
+            return new WP_Error(
+                    'jwt_auth_expired_token',
+                    'Expired token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+        }
+        catch(Exception $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
         }
     }
 
