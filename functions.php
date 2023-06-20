@@ -671,6 +671,9 @@ $json_str = file_get_contents('php://input');
 // Get as an object or array
 $json_obj = json_decode($json_str);
 
+return $json_obj;
+            // Check if role is provided in the request
+
 if (isset($json_obj->role)) {
     // Decode the JSON string to an array
     $roles = json_decode($json_obj->role, true);
