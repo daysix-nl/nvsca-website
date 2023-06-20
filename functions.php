@@ -657,14 +657,10 @@ function my_rest_pre_dispatchb($response, $server, $request) {
                         // Delete all previous entries
                         delete_post_meta($post_ID, 'role');
 
-                        // // Add each new entry
-                        foreach ($roles as $role) {
-                            add_post_meta($post_ID, 'role', $role, false );
-                        }
-            //                 $roles_sanitized = array_map('sanitize_text_field', $roles);
-            // add_post_meta($post_ID, 'role', $roles_sanitized);
-
-                //  add_post_meta($post_ID, 'role', $roles);
+     // Add each role as a separate entry
+            foreach ($roles as $role) {
+                add_post_meta($post_ID, 'role', sanitize_text_field($role));
+            }
                     });
                 }
             }
