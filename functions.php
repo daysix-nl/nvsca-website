@@ -651,7 +651,7 @@ function my_rest_pre_dispatchb($response, $server, $request) {
             // Check if role is provided in the request
             if (isset($_POST['role'])) {
                 // Decode the JSON string to an array
-                $roles = json_decode(stripslashes($_POST['role']), true);
+                $roles = json_decode($_POST['role'], true);
 
                 if (is_array($roles)) {
                     add_action('add_attachment', function($post_ID) use ($roles) {
