@@ -742,26 +742,23 @@ function check_role_before_sending_media($prepared_response, $request) {
         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
 
         try {
-            $user = JWT::decode($token, new Key($secret_key, 'HS256'));
-
-            $required_roles = get_post_meta($post->ID, 'role', false);
+            $user = JWT::decode($token, $secret_key, array('HS256'));
 
             if (!isset($user->data->user->id)) {
-                $response->set_status(403);
-                $response->set_data(array(
-                    'message' => 'Invalid token.',
-                    'code' => 'jwt_auth_invalid_token'
-                ));
-                return $response;
+                return new WP_REST_Response('Invalid token.', 403);
             }
+
+            // Assuming that the user's role is stored in $user->data->user->role
+            $user_role = $user->data->user->role;
             
-            if (!isset($user->data->user->role) || !in_array($user->data->user->role, $required_roles)) {
-                $response->set_status(403);
-                $response->set_data(array(
-                    'message' => 'Invalid role.',
-                    'code' => 'jwt_auth_invalid_role'
-                ));
-                return $response;
+            // The roles required to access the media are part of the fetched data, 
+            // we can get them from the 'role' property of the prepared response
+            $media_data = $prepared_response->get_data();
+            $required_roles = $media_data['role'];
+
+            // Check if user role is in required roles
+            if (!in_array($user_role, $required_roles)) {
+                return new WP_REST_Response('Invalid role.', 403);
             }
 
         } catch (Exception $e) {
