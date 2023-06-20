@@ -561,17 +561,19 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
 function add_role_field_to_response() {
     register_rest_field('attachment', 'role', array(
         'get_callback' => function($data) {
-            return get_post_meta($data['id'], 'role', false); // Use false to get an array
+            return get_post_meta($data['id'], 'role'); // Remove the 'false' parameter to get an array
         },
         'update_callback' => function($value, $object) {
             // Delete all previous entries
             delete_post_meta($object->ID, 'role');
 
-            // Sanitize each role and add the sanitized array as metadata
-            $roles = array_map('sanitize_text_field', $value);
-            add_post_meta($object->ID, 'role', $roles);
+            // Sanitize each role and add them as separate metadata entries
+            foreach ($value as $role) {
+                add_post_meta($object->ID, 'role', sanitize_text_field($role));
+            }
 
-            return get_post_meta($object->ID, 'role', true);
+            // Retrieve the updated roles as an array
+            return get_post_meta($object->ID, 'role');
         },
         'schema' => array(
             'description' => 'Role',
@@ -580,6 +582,7 @@ function add_role_field_to_response() {
     ));
 }
 add_action('rest_api_init', 'add_role_field_to_response');
+
 
 
 
