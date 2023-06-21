@@ -875,6 +875,12 @@ function my_acf_op_init() {
             'capability'    => 'edit_posts',
             'redirect'      => false
         ));
+
+        acf_add_options_sub_page(array(
+            'page_title'    => 'Document categorieen',
+            'menu_title'    => 'Categorieen',
+            'parent_slug'   => 'theme-general-settings',
+        ));
     }
 }
 add_action('acf/init', 'my_acf_op_init');
