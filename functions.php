@@ -841,3 +841,29 @@ if( function_exists('acf_add_options_page') ) {
         'parent_slug'   => 'theme-general-settings',
     ));
 }
+
+
+add_action('rest_api_init', function() {
+    register_rest_route('myplugin/v1', '/theme-settings/', array(
+        'methods' => 'GET',
+        'callback' => 'get_theme_settings',
+    ));
+});
+
+function get_theme_settings() {
+    // Check if ACF is active and function exists
+    if(function_exists('acf_add_options_page')) {
+        // Get fields from both option pages
+        $general_settings = get_fields('theme-general-settings');
+        $document_categories = get_fields('theme-general-settings_document_categorieen');
+
+        // Return data as JSON
+        return array(
+            'general_settings' => $general_settings,
+            'document_categories' => $document_categories,
+        );
+    }
+
+    // Return an empty object if the function does not exist
+    return new WP_Error('acf_not_found', 'ACF Plugin not found', array('status' => 404));
+}
