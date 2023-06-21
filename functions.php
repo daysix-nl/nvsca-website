@@ -347,500 +347,500 @@ add_action('init', 'add_event_rest_support', 25);
 | 
 |
 */
-// function create_document_post_type()
-// {
-//     // Labels for the post type
-//     $labels = array(
-//         'name' => __('Documenten'),
-//         'singular_name' => __('Document'),
-//         'menu_name' => __('Documenten'),
-//         'add_new' => __('Add New'),
-//         'add_new_item' => __('Add New Document'),
-//         'edit_item' => __('Edit Document'),
-//         'new_item' => __('New Document'),
-//         'view_item' => __('View Document'),
-//         'search_items' => __('Search Documenten'),
-//         'not_found' => __('No documents found'),
-//         'not_found_in_trash' => __('No documents found in Trash'),
-//         'all_items' => __('All Documenten'),
-//     );
-//     // Options for the post type
-//     $args = array(
-//         'labels' => $labels,
-//         'public' => true,
-//         'publicly_queryable' => true,
-//         'show_ui' => true,
-//         'show_in_menu' => true,
-//         'query_var' => true,
-//         'rewrite' => array('slug' => 'document'),
-//         'capability_type' => 'post',
-//         'has_archive' => true,
-//         'hierarchical' => false,
-//         'menu_position' => 5,
-//         'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
-//         'taxonomies' => array('category', 'post_tag'),
-//         'menu_icon' => 'dashicons-media-text',
-//     );
+function create_document_post_type()
+{
+    // Labels for the post type
+    $labels = array(
+        'name' => __('Documenten'),
+        'singular_name' => __('Document'),
+        'menu_name' => __('Documenten'),
+        'add_new' => __('Add New'),
+        'add_new_item' => __('Add New Document'),
+        'edit_item' => __('Edit Document'),
+        'new_item' => __('New Document'),
+        'view_item' => __('View Document'),
+        'search_items' => __('Search Documenten'),
+        'not_found' => __('No documents found'),
+        'not_found_in_trash' => __('No documents found in Trash'),
+        'all_items' => __('All Documenten'),
+    );
+    // Options for the post type
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'publicly_queryable' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'document'),
+        'capability_type' => 'post',
+        'has_archive' => true,
+        'hierarchical' => false,
+        'menu_position' => 5,
+        'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
+        'taxonomies' => array('category', 'post_tag'),
+        'menu_icon' => 'dashicons-media-text',
+    );
 
-//     // Register the post type
-//     register_post_type('document', $args);
-// }
-// add_action('init', 'create_document_post_type');
+    // Register the post type
+    register_post_type('document', $args);
+}
+add_action('init', 'create_document_post_type');
 
-// function add_document_rest_support()
-// {
-//     global $wp_post_types;
-//     $wp_post_types['document']->show_in_rest = true;
-//     $wp_post_types['document']->rest_base = 'documenten';
-//     $wp_post_types['document']->rest_controller_class = 'WP_REST_Posts_Controller';
-// }
-// add_action('init', 'add_document_rest_support', 25);
+function add_document_rest_support()
+{
+    global $wp_post_types;
+    $wp_post_types['document']->show_in_rest = true;
+    $wp_post_types['document']->rest_base = 'documenten';
+    $wp_post_types['document']->rest_controller_class = 'WP_REST_Posts_Controller';
+}
+add_action('init', 'add_document_rest_support', 25);
 
-// /*
-// |--------------------------------------------------------------------------
-// | Add more data in JWT
-// |--------------------------------------------------------------------------
-// |
-// | 
-// | 
-// |
-// */
-
-
-// /**
-//  * Change the token's expire value.
-//  *
-//  * @param int $expire The default "exp" value in timestamp.
-//  * @param int $issued_at The "iat" value in timestamp.
-//  *
-//  * @return int The "nbf" value.
-//  */
-// add_filter(
-//     'jwt_auth_expire',
-//     function ( $expire, $issued_at ) {
-//         // Modify the "expire" here.
-//         return time() + (DAY_IN_SECONDS * 1);
-//     },
-//     10,
-//     2
-// );
+/*
+|--------------------------------------------------------------------------
+| Add more data in JWT
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
 
 
-// add_filter(
-//     'jwt_auth_payload',
-//     function ( $payload, $user ) {
-//         $newData = array(
-//             'email' => $user->user_email,
-//             'role' => $user->roles[0],
-//         );
-//         $payload['data']['user'] = array_merge($payload['data']['user'], $newData);
-//         return $payload;
-//     },
-//     10,
-//     2
-// );
+/**
+ * Change the token's expire value.
+ *
+ * @param int $expire The default "exp" value in timestamp.
+ * @param int $issued_at The "iat" value in timestamp.
+ *
+ * @return int The "nbf" value.
+ */
+add_filter(
+    'jwt_auth_expire',
+    function ( $expire, $issued_at ) {
+        // Modify the "expire" here.
+        return time() + (DAY_IN_SECONDS * 1);
+    },
+    10,
+    2
+);
 
 
+add_filter(
+    'jwt_auth_payload',
+    function ( $payload, $user ) {
+        $newData = array(
+            'email' => $user->user_email,
+            'role' => $user->roles[0],
+        );
+        $payload['data']['user'] = array_merge($payload['data']['user'], $newData);
+        return $payload;
+    },
+    10,
+    2
+);
 
 
 
 
 
-// /*
-// |--------------------------------------------------------------------------
-// | Custom post type documents bescherm rest api
-// |--------------------------------------------------------------------------
-// |
-// | 
-// | 
-// |
-// */
-// add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
 
-// function jwt_authenticate_for_rest_requests($result, $server, $request) {
-//     if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
-//         $headers = getallheaders();
 
-//         if (!isset($headers['Authorization'])) {
-//             return new WP_Error(
-//                 'jwt_auth_no_auth_header',
-//                 'Authorization header not found. Headers: ' . json_encode($headers),
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
+/*
+|--------------------------------------------------------------------------
+| Custom post type documents bescherm rest api
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
+add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
 
-//         $authHeader = $headers['Authorization'];
-//         $token = str_replace('Bearer ', '', $authHeader); 
+function jwt_authenticate_for_rest_requests($result, $server, $request) {
+    if (strpos($request->get_route(), '/wp/v2/documenten') !== false) {
+        $headers = getallheaders();
 
-//         if (!$token) {
-//             return new WP_Error(
-//                 'jwt_auth_bad_auth_header',
-//                 'Authorization cookie malformed.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
+        if (!isset($headers['Authorization'])) {
+            return new WP_Error(
+                'jwt_auth_no_auth_header',
+                'Authorization header not found. Headers: ' . json_encode($headers),
+                array(
+                    'status' => 403,
+                )
+            );
+        }
 
-//         // Here replace this with your secret key. It's better to store this in your wp-config.php file.
-//         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+        $authHeader = $headers['Authorization'];
+        $token = str_replace('Bearer ', '', $authHeader); 
 
-//         try {
-//             $user = JWT::decode($token, new Key($secret_key, 'HS256'));
+        if (!$token) {
+            return new WP_Error(
+                'jwt_auth_bad_auth_header',
+                'Authorization cookie malformed.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
+
+        // Here replace this with your secret key. It's better to store this in your wp-config.php file.
+        $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+
+        try {
+            $user = JWT::decode($token, new Key($secret_key, 'HS256'));
             
-//             if (!isset($user->data->user->id)) {
-//                 return new WP_Error(
-//                     'jwt_auth_invalid_token',
-//                     'Invalid token.',
-//                     array(
-//                         'status' => 403,
-//                     )
-//                 );
-//             }
-//             if (!isset($user->data->user->role) || $user->data->user->role !== 'admin') {
-//                 return new WP_Error(
-//                     'jwt_auth_invalid_role',
-//                     'Invalid role.',
-//                     array(
-//                         'status' => 403,
-//                     )
-//                 );
-//             }
-//         } catch (SignatureInvalidException $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }  catch (BeforeValidException $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         } catch (ExpiredException $e) {
-//             return new WP_Error(
-//                     'jwt_auth_expired_token',
-//                     'Expired token.',
-//                     array(
-//                         'status' => 403,
-//                     )
-//                 );
-//         }
-//         catch(Exception $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
+            if (!isset($user->data->user->id)) {
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
+            if (!isset($user->data->user->role) || $user->data->user->role !== 'admin') {
+                return new WP_Error(
+                    'jwt_auth_invalid_role',
+                    'Invalid role.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
+        } catch (SignatureInvalidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }  catch (BeforeValidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        } catch (ExpiredException $e) {
+            return new WP_Error(
+                    'jwt_auth_expired_token',
+                    'Expired token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+        }
+        catch(Exception $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
 
-//     }
+    }
 
-//     return $result;
-// }
+    return $result;
+}
 
 
-// /*
-// |--------------------------------------------------------------------------
-// | Add role to media
-// |--------------------------------------------------------------------------
-// |
-// | 
-// | 
-// |
-// */
-// function add_role_field_to_response() {
-//     register_rest_field('attachment', 'role', array(
-//         'get_callback' => function($data) {
-//             return get_post_meta($data['id'], 'role'); // Remove the 'false' parameter to get an array
-//         },
-//         'update_callback' => function($value, $object) {
-//             // Delete all previous entries
-//             delete_post_meta($object->ID, 'role');
+/*
+|--------------------------------------------------------------------------
+| Add role to media
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
+function add_role_field_to_response() {
+    register_rest_field('attachment', 'role', array(
+        'get_callback' => function($data) {
+            return get_post_meta($data['id'], 'role'); // Remove the 'false' parameter to get an array
+        },
+        'update_callback' => function($value, $object) {
+            // Delete all previous entries
+            delete_post_meta($object->ID, 'role');
 
-//             // Sanitize each role and add them as separate metadata entries
-//             foreach ($value as $role) {
-//                 add_post_meta($object->ID, 'role', sanitize_text_field($role));
-//             }
+            // Sanitize each role and add them as separate metadata entries
+            foreach ($value as $role) {
+                add_post_meta($object->ID, 'role', sanitize_text_field($role));
+            }
 
-//             // Retrieve the updated roles as an array
-//             return get_post_meta($object->ID, 'role');
-//         },
-//         'schema' => array(
-//             'description' => 'Role',
-//             'type' => 'array'
-//         ),
-//     ));
-// }
-// add_action('rest_api_init', 'add_role_field_to_response');
+            // Retrieve the updated roles as an array
+            return get_post_meta($object->ID, 'role');
+        },
+        'schema' => array(
+            'description' => 'Role',
+            'type' => 'array'
+        ),
+    ));
+}
+add_action('rest_api_init', 'add_role_field_to_response');
 
-// /*
-// |--------------------------------------------------------------------------
-// | Check role on media upload and JWT token for media POST request
-// |--------------------------------------------------------------------------
-// |
-// | 
-// | 
-// |
-// */
-// add_filter('rest_pre_dispatch', 'my_rest_pre_dispatchb', 10, 3);
+/*
+|--------------------------------------------------------------------------
+| Check role on media upload and JWT token for media POST request
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
+add_filter('rest_pre_dispatch', 'my_rest_pre_dispatchb', 10, 3);
 
-// function my_rest_pre_dispatchb($response, $server, $request) {
-//     if ($request->get_method() === 'POST' && strpos($request->get_route(), '/wp/v2/media') !== false) {
+function my_rest_pre_dispatchb($response, $server, $request) {
+    if ($request->get_method() === 'POST' && strpos($request->get_route(), '/wp/v2/media') !== false) {
 
-//         $headers = getallheaders();
+        $headers = getallheaders();
 
-//         if (!isset($headers['Authorization'])) {
-//             return new WP_Error(
-//                 'jwt_auth_no_auth_header',
-//                 'Authorization header not found. Headers: ' . json_encode($headers),
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
+        if (!isset($headers['Authorization'])) {
+            return new WP_Error(
+                'jwt_auth_no_auth_header',
+                'Authorization header not found. Headers: ' . json_encode($headers),
+                array(
+                    'status' => 403,
+                )
+            );
+        }
 
-//         $authHeader = $headers['Authorization'];
-//         $token = str_replace('Bearer ', '', $authHeader); 
+        $authHeader = $headers['Authorization'];
+        $token = str_replace('Bearer ', '', $authHeader); 
 
-//         if (!$token) {
-//             return new WP_Error(
-//                 'jwt_auth_bad_auth_header',
-//                 'Authorization cookie malformed.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
+        if (!$token) {
+            return new WP_Error(
+                'jwt_auth_bad_auth_header',
+                'Authorization cookie malformed.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
 
-//         // Here replace this with your secret key. It's better to store this in your wp-config.php file.
-//         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+        // Here replace this with your secret key. It's better to store this in your wp-config.php file.
+        $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
 
-//         try {
-//             $user = JWT::decode($token, new Key($secret_key, 'HS256'));
+        try {
+            $user = JWT::decode($token, new Key($secret_key, 'HS256'));
             
-//             if (!isset($user->data->user->id)) {
-//                 return new WP_Error(
-//                     'jwt_auth_invalid_token',
-//                     'Invalid token.',
-//                     array(
-//                         'status' => 403,
-//                     )
-//                 );
-//             }
-//             if (!isset($user->data->user->role) || $user->data->user->role !== 'admin') {
-//                 return new WP_Error(
-//                     'jwt_auth_invalid_role',
-//                     'Invalid role.',
-//                     array(
-//                         'status' => 403,
-//                     )
-//                 );
-//             }
+            if (!isset($user->data->user->id)) {
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
+            if (!isset($user->data->user->role) || $user->data->user->role !== 'admin') {
+                return new WP_Error(
+                    'jwt_auth_invalid_role',
+                    'Invalid role.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
 
-//             // Check if role is provided in the request
-//             if (isset($_POST['role'])) {
-//                 // Decode the JSON string to an array
-//                 $roles = $_POST['role'];
+            // Check if role is provided in the request
+            if (isset($_POST['role'])) {
+                // Decode the JSON string to an array
+                $roles = $_POST['role'];
 
-//                 if (is_array($roles)) {
-//                     add_action('add_attachment', function($post_ID) use ($roles) {
-//                         // Delete all previous entries
-//                         delete_post_meta($post_ID, 'role');
+                if (is_array($roles)) {
+                    add_action('add_attachment', function($post_ID) use ($roles) {
+                        // Delete all previous entries
+                        delete_post_meta($post_ID, 'role');
 
-//                         foreach ($roles as $role) {
-//                             add_post_meta($post_ID, 'role', sanitize_text_field($role));
-//                         }
-//                     });
-//                 }
-//             }
+                        foreach ($roles as $role) {
+                            add_post_meta($post_ID, 'role', sanitize_text_field($role));
+                        }
+                    });
+                }
+            }
 
-//         } catch (SignatureInvalidException $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }  catch (BeforeValidException $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         } catch (ExpiredException $e) {
-//             return new WP_Error(
-//                     'jwt_auth_expired_token',
-//                     'Expired token.',
-//                     array(
-//                         'status' => 403,
-//                     )
-//                 );
-//         }
-//         catch(Exception $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
-//     }
+        } catch (SignatureInvalidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }  catch (BeforeValidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        } catch (ExpiredException $e) {
+            return new WP_Error(
+                    'jwt_auth_expired_token',
+                    'Expired token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+        }
+        catch(Exception $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
+    }
 
-//     return $response;
-// }
+    return $response;
+}
 
-// /*
-// |--------------------------------------------------------------------------
-// | Check role on media upload and GET request
-// |--------------------------------------------------------------------------
-// |
-// | 
-// | 
-// |
-// */
-// add_filter('rest_request_before_callbacks', 'check_role_before_sending_media', 10, 3);
+/*
+|--------------------------------------------------------------------------
+| Check role on media upload and GET request
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
+add_filter('rest_request_before_callbacks', 'check_role_before_sending_media', 10, 3);
 
-// function check_role_before_sending_media($response, $handler, $request) {
-//     // Here $request is a WP_REST_Request object, not a WP_REST_Server
-//     if ($request->get_method() === 'GET' && strpos($request->get_route(), '/wp/v2/media') !== false) {
-//         $headers = getallheaders();
+function check_role_before_sending_media($response, $handler, $request) {
+    // Here $request is a WP_REST_Request object, not a WP_REST_Server
+    if ($request->get_method() === 'GET' && strpos($request->get_route(), '/wp/v2/media') !== false) {
+        $headers = getallheaders();
 
-//         if (!isset($headers['Authorization'])) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
+        if (!isset($headers['Authorization'])) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
 
-//         $authHeader = $headers['Authorization'];
-//         $token = str_replace('Bearer ', '', $authHeader); 
+        $authHeader = $headers['Authorization'];
+        $token = str_replace('Bearer ', '', $authHeader); 
 
-//         if (!$token) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
+        if (!$token) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
 
-//         // Here replace this with your secret key. It's better to store this in your wp-config.php file.
-//         $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+        // Here replace this with your secret key. It's better to store this in your wp-config.php file.
+        $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
 
-//         try {
-//             $user = JWT::decode($token, new Key($secret_key, 'HS256'));
+        try {
+            $user = JWT::decode($token, new Key($secret_key, 'HS256'));
 
-//             if (!isset($user->data->user->id)) {
-//                 return new WP_Error(
-//                     'jwt_auth_invalid_token',
-//                     'Invalid token.',
-//                     array(
-//                         'status' => 403,
-//                     )
-//                 );
-//             }
+            if (!isset($user->data->user->id)) {
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
 
-//             // Assuming that the user's role is stored in $user->data->user->role
-//             $user_role = $user->data->user->role;
+            // Assuming that the user's role is stored in $user->data->user->role
+            $user_role = $user->data->user->role;
             
-//             // Fetch the required roles from the 'role' property of the media object
-//             $media_id = $request->get_param('id');
-//             $media = get_post($media_id);
-//             $required_roles = get_post_meta($media->ID, 'role', false);
+            // Fetch the required roles from the 'role' property of the media object
+            $media_id = $request->get_param('id');
+            $media = get_post($media_id);
+            $required_roles = get_post_meta($media->ID, 'role', false);
 
-//                // Check if user role is in required roles
-//             if (!in_array($user_role, $required_roles)) {
-//                 return new WP_Error(
-//                     'jwt_auth_invalid_token',
-//                     'Invalid token.',
-//                     array(
-//                         'status' => 403,
-//                 )
-//             );
-//             }
-//         } catch (SignatureInvalidException $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }  catch (BeforeValidException $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         } catch (ExpiredException $e) {
-//             return new WP_Error(
-//                     'jwt_auth_expired_token',
-//                     'Expired token.',
-//                     array(
-//                         'status' => 403,
-//                     )
-//                 );
-//         }
-//         catch(Exception $e) {
-//             return new WP_Error(
-//                 'jwt_auth_invalid_token',
-//                 'Invalid token.',
-//                 array(
-//                     'status' => 403,
-//                 )
-//             );
-//         }
-//     }
+               // Check if user role is in required roles
+            if (!in_array($user_role, $required_roles)) {
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                )
+            );
+            }
+        } catch (SignatureInvalidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }  catch (BeforeValidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        } catch (ExpiredException $e) {
+            return new WP_Error(
+                    'jwt_auth_expired_token',
+                    'Expired token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+        }
+        catch(Exception $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
+    }
 
-//     return $response;
-// }
+    return $response;
+}
 
-// /*
-// |--------------------------------------------------------------------------
-// | Options ACF categorieen
-// |--------------------------------------------------------------------------
-// |
-// | 
-// | 
-// |
-// */
+/*
+|--------------------------------------------------------------------------
+| Options ACF categorieen
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
 
-// if( function_exists('acf_add_options_page') ) {
+if( function_exists('acf_add_options_page') ) {
     
-//     acf_add_options_page(array(
-//         'page_title'    => 'Theme General Settings',
-//         'menu_title'    => 'Theme Settings',
-//         'menu_slug'     => 'theme-general-settings',
-//         'capability'    => 'edit_posts',
-//         'redirect'      => false
-//     ));
+    acf_add_options_page(array(
+        'page_title'    => 'Theme General Settings',
+        'menu_title'    => 'Theme Settings',
+        'menu_slug'     => 'theme-general-settings',
+        'capability'    => 'edit_posts',
+        'redirect'      => false
+    ));
     
-//     acf_add_options_sub_page(array(
-//         'page_title'    => 'Document categorieen',
-//         'menu_title'    => 'Categorieen',
-//         'parent_slug'   => 'theme-general-settings',
-//     ));
-// }
+    acf_add_options_sub_page(array(
+        'page_title'    => 'Document categorieen',
+        'menu_title'    => 'Categorieen',
+        'parent_slug'   => 'theme-general-settings',
+    ));
+}
 
 
 // add_action('rest_api_init', function() {
