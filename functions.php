@@ -854,7 +854,7 @@ function get_theme_settings() {
     // Check if ACF is active and function exists
     if(function_exists('acf_add_options_page')) {
         // Get fields from both option pages
-        $categories = get_fields('categories', 'option');
+        $categories = the_field('categories', 'option');
 
         // Return data as JSON
         return array(
