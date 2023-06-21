@@ -825,43 +825,65 @@ function check_role_before_sending_media($response, $handler, $request) {
 |
 */
 
-if( function_exists('acf_add_options_page') ) {
+// if( function_exists('acf_add_options_page') ) {
     
-    acf_add_options_page(array(
-        'page_title'    => 'Theme General Settings',
-        'menu_title'    => 'Theme Settings',
-        'menu_slug'     => 'theme-general-settings',
-        'capability'    => 'edit_posts',
-        'redirect'      => false
-    ));
+//     acf_add_options_page(array(
+//         'page_title'    => 'Theme General Settings',
+//         'menu_title'    => 'Theme Settings',
+//         'menu_slug'     => 'theme-general-settings',
+//         'capability'    => 'edit_posts',
+//         'redirect'      => false
+//     ));
     
-    acf_add_options_sub_page(array(
-        'page_title'    => 'Document categorieen',
-        'menu_title'    => 'Categorieen',
-        'parent_slug'   => 'theme-general-settings',
-    ));
-}
+//     acf_add_options_sub_page(array(
+//         'page_title'    => 'Document categorieen',
+//         'menu_title'    => 'Categorieen',
+//         'parent_slug'   => 'theme-general-settings',
+//     ));
+// }
 
 
-add_action('rest_api_init', function() {
-    register_rest_route('acf/v1', '/theme-settings/', array(
-        'methods' => 'GET',
-        'callback' => 'get_theme_settings',
-    ));
-});
+// add_action('rest_api_init', function() {
+//     register_rest_route('acf/v1', '/theme-settings/', array(
+//         'methods' => 'GET',
+//         'callback' => 'get_theme_settings',
+//     ));
+// });
 
-function get_theme_settings() {
-    // Check if ACF is active and function exists
-    if(function_exists('acf_add_options_page')) {
-        // Get fields from both option pages
-        $categories = the_field('categories', 'option');
+// function get_theme_settings() {
+//     // Check if ACF is active and function exists
+//     if(function_exists('acf_add_options_page')) {
+//         // Get fields from both option pages
+//         $categories = the_field('categories', 'option');
 
-        // Return data as JSON
-        return array(
-            'categories' => $categories,
-        );
+//         // Return data as JSON
+//         return array(
+//             'categories' => $categories,
+//         );
+//     }
+
+//     // Return an empty object if the function does not exist
+//     return new WP_Error('acf_not_found', 'ACF Plugin not found', array('status' => 404));
+// }
+
+add_action('acf/init', 'my_acf_op_init');
+function my_acf_op_init() {
+
+    // Check function exists.
+    if( function_exists('acf_add_options_page') ) {
+
+        // Add parent.
+        $parent = acf_add_options_page(array(
+            'page_title'  => __('Theme General Settings'),
+            'menu_title'  => __('Theme Settings'),
+            'redirect'    => false,
+        ));
+
+        // Add sub page.
+        $child = acf_add_options_page(array(
+            'page_title'  => __('Social Settings'),
+            'menu_title'  => __('Social'),
+            'parent_slug' => $parent['menu_slug'],
+        ));
     }
-
-    // Return an empty object if the function does not exist
-    return new WP_Error('acf_not_found', 'ACF Plugin not found', array('status' => 404));
 }
