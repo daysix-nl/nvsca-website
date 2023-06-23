@@ -489,6 +489,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
 
         try {
             $user = JWT::decode($token, new Key($secret_key, 'HS256'));
+            var_dump($user);
             
             if (!isset($user->data->user->id)) {
                 return new WP_Error(
