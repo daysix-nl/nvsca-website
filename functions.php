@@ -914,16 +914,9 @@ function get_theme_settings() {
 |
 */
 
-add_filter('rest_post_collection_params', 'custom_max_rest_pages', 10, 1);
 
-/**
- * Increase the maximum limit of items per page in the WordPress REST API
- *
- * @param array $params The collection parameters
- *
- * @return array $params The modified collection parameters
- */
-function custom_max_rest_pages($params) {
-    $params['per_page']['maximum'] = -1; // -1 indicates no limit
-    return $params;
+function maximum_api_filter($query_params) {
+    $query_params['per_page']["maximum"]=200;
+    return $query_params;
 }
+add_filter('rest_page_collection_params', 'maximum_api_filter');
