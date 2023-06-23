@@ -682,6 +682,8 @@ function my_rest_pre_dispatchb($response, $server, $request) {
                 );
         }
 
+    }
+
     return $response;
 }
 
