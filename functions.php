@@ -534,15 +534,6 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
                     )
                 );
         }
-        catch(Exception $e) {
-            return new WP_Error(
-                'jwt_auth_invalid_token',
-                'Exception: ' . $e->getMessage(),
-                array(
-                    'status' => 403,
-                )
-            );
-        }
 
     }
 
@@ -690,16 +681,6 @@ function my_rest_pre_dispatchb($response, $server, $request) {
                     )
                 );
         }
-        catch(Exception $e) {
-            return new WP_Error(
-                'jwt_auth_invalid_token',
-                'Invalid token.',
-                array(
-                    'status' => 403,
-                )
-            );
-        }
-    }
 
     return $response;
 }
@@ -801,15 +782,6 @@ function check_role_before_sending_media($response, $handler, $request) {
                         'status' => 403,
                     )
                 );
-        }
-        catch(Exception $e) {
-            return new WP_Error(
-                'jwt_auth_invalid_token',
-                'Invalid token.',
-                array(
-                    'status' => 403,
-                )
-            );
         }
     }
 
