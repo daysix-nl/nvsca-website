@@ -903,3 +903,27 @@ function get_theme_settings() {
     }
     return $fields;
 }
+
+/*
+|--------------------------------------------------------------------------
+| Make the REST API return all posts
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
+
+add_filter('rest_post_collection_params', 'custom_max_rest_pages', 10, 1);
+
+/**
+ * Increase the maximum limit of items per page in the WordPress REST API
+ *
+ * @param array $params The collection parameters
+ *
+ * @return array $params The modified collection parameters
+ */
+function custom_max_rest_pages($params) {
+    $params['per_page']['maximum'] = -1; // -1 indicates no limit
+    return $params;
+}
