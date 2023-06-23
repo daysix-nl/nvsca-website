@@ -593,7 +593,7 @@ function my_rest_pre_dispatchb($response, $server, $request) {
         if (!isset($headers['Authorization'])) {
             return new WP_Error(
                 'jwt_auth_no_auth_header',
-                'Authorization header not found. Headers: ' . json_encode($headers),
+                'Authorization header not found.', 
                 array(
                     'status' => 403,
                 )
