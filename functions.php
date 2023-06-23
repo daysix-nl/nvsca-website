@@ -915,9 +915,9 @@ function get_theme_settings() {
 */
 
 add_filter( 'rest_post_collection_params', function ( $params, WP_Post_Type $post_type ) {
-	if ( 'post' === $post_type->name && isset( $params['per_page'] ) ) {
-		$params['per_page']['maximum'] = 500;
-	}
+    if ( ( 'documenten' === $post_type->name || 'users' === $post_type->name ) && isset( $params['per_page'] ) ) {
+        $params['per_page']['maximum'] = 500;
+    }
 
-	return $params;
+    return $params;
 }, 10, 2 );
