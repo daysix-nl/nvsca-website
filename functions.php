@@ -914,9 +914,10 @@ function get_theme_settings() {
 |
 */
 
+add_filter( 'rest_post_collection_params', function ( $params, WP_Post_Type $post_type ) {
+	if ( 'post' === $post_type->name && isset( $params['per_page'] ) ) {
+		$params['per_page']['maximum'] = 500;
+	}
 
-function maximum_api_filter($query_params) {
-    $query_params['per_page']["maximum"]=200;
-    return $query_params;
-}
-add_filter('rest_page_collection_params', 'maximum_api_filter');
+	return $params;
+}, 10, 2 );
