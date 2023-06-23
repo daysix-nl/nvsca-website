@@ -493,7 +493,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
             
             if (!isset($user->data->user->id)) {
                 return new WP_Error(
-                    'jwt_auth_invalid_token aa',
+                    'jwt_auth_invalid_token',
                     'Invalid token.',
                     array(
                         'status' => 403,
@@ -536,8 +536,8 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
         }
         catch(Exception $e) {
             return new WP_Error(
-                'jwt_auth_invalid_token bb',
-                'Invalid token.',
+                'jwt_auth_invalid_token',
+                'Exception: ' . $e->getMessage(),
                 array(
                     'status' => 403,
                 )
