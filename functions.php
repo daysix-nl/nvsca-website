@@ -511,7 +511,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
             }
         } catch (SignatureInvalidException $e) {
             return new WP_Error(
-                'jwt_auth_invalid_token',
+                'jwt_auth_invalid_token aa',
                 'Invalid token.',
                 array(
                     'status' => 403,
@@ -519,7 +519,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
             );
         }  catch (BeforeValidException $e) {
             return new WP_Error(
-                'jwt_auth_invalid_token',
+                'jwt_auth_invalid_token bb',
                 'Invalid token.',
                 array(
                     'status' => 403,
