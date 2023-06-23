@@ -464,7 +464,7 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
         if (!isset($headers['Authorization'])) {
             return new WP_Error(
                 'jwt_auth_no_auth_header',
-                'Authorization header not found. Headers: ' . json_encode($headers),
+                'Authorization header not found.',
                 array(
                     'status' => 403,
                 )
@@ -489,7 +489,8 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
 
         try {
             $user = JWT::decode($token, new Key($secret_key, 'HS256'));
-
+            var_dump($user);
+            
             if (!isset($user->data->user->id)) {
                 return new WP_Error(
                     'jwt_auth_invalid_token',
@@ -532,6 +533,15 @@ function jwt_authenticate_for_rest_requests($result, $server, $request) {
                         'status' => 403,
                     )
                 );
+        }
+        catch(Exception $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
         }
 
     }
@@ -593,7 +603,7 @@ function my_rest_pre_dispatchb($response, $server, $request) {
         if (!isset($headers['Authorization'])) {
             return new WP_Error(
                 'jwt_auth_no_auth_header',
-                'Authorization header not found.', 
+                'Authorization header not found.',
                 array(
                     'status' => 403,
                 )
@@ -680,7 +690,15 @@ function my_rest_pre_dispatchb($response, $server, $request) {
                     )
                 );
         }
-
+        catch(Exception $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
     }
 
     return $response;
@@ -783,6 +801,15 @@ function check_role_before_sending_media($response, $handler, $request) {
                         'status' => 403,
                     )
                 );
+        }
+        catch(Exception $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
         }
     }
 
