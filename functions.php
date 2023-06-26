@@ -994,9 +994,9 @@ add_action('init', 'add_bestuur_rest_support', 25);
 | 
 |
 */
-add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
+add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requestsa', 10, 3);
 
-function jwt_authenticate_for_rest_requests($result, $server, $request) {
+function jwt_authenticate_for_rest_requestsa($result, $server, $request) {
     if (strpos($request->get_route(), '/wp/v2/bestuurs') !== false) {
         $headers = getallheaders();
 
