@@ -922,3 +922,167 @@ add_filter( 'rest_post_collection_params', function ( $params, WP_Post_Type $pos
 
     return $params;
 }, 10, 2 );
+
+
+/*
+|--------------------------------------------------------------------------
+| Make a post bestuur
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
+
+
+function create_bestuur_post_type()
+{
+    // Labels for the post type
+    $labels = array(
+        'name' => __('Bestuur'),
+        'singular_name' => __('Bestuur'),
+        'menu_name' => __('Bestuur'),
+        'add_new' => __('Add New'),
+        'add_new_item' => __('Add New Bestuur'),
+        'edit_item' => __('Edit Bestuur'),
+        'new_item' => __('New Bestuur'),
+        'view_item' => __('View Bestuur'),
+        'search_items' => __('Search Bestuur'),
+        'not_found' => __('No bestuur found'),
+        'not_found_in_trash' => __('No bestuur found in Trash'),
+        'all_items' => __('All Bestuur'),
+    );
+    // Options for the post type
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'publicly_queryable' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'bestuur'),
+        'capability_type' => 'post',
+        'has_archive' => true,
+        'hierarchical' => false,
+        'menu_position' => 5,
+        'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
+        'taxonomies' => array('category', 'post_tag'),
+        'menu_icon' => 'dashicons-groups',
+    );
+
+    // Register the post type
+    register_post_type('bestuur', $args);
+}
+add_action('init', 'create_bestuur_post_type');
+
+function add_bestuur_rest_support()
+{
+    global $wp_post_types;
+    $wp_post_types['bestuur']->show_in_rest = true;
+    $wp_post_types['bestuur']->rest_base = 'bestuurs';
+    $wp_post_types['bestuur']->rest_controller_class = 'WP_REST_Posts_Controller';
+}
+add_action('init', 'add_bestuur_rest_support', 25);
+
+
+/*
+|--------------------------------------------------------------------------
+| Custom post type documents bescherm rest api
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
+add_filter('rest_pre_dispatch', 'jwt_authenticate_for_rest_requests', 10, 3);
+
+function jwt_authenticate_for_rest_requests($result, $server, $request) {
+    if (strpos($request->get_route(), '/wp/v2/bestuurs') !== false) {
+        $headers = getallheaders();
+
+        if (!isset($headers['Authorization'])) {
+            return new WP_Error(
+                'jwt_auth_no_auth_header',
+                'Authorization header not found.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
+
+        $authHeader = $headers['Authorization'];
+        $token = str_replace('Bearer ', '', $authHeader); 
+
+        if (!$token) {
+            return new WP_Error(
+                'jwt_auth_bad_auth_header',
+                'Authorization cookie malformed.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
+
+        // Here replace this with your secret key. It's better to store this in your wp-config.php file.
+        $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false; 
+
+        try {
+            $user = JWT::decode($token, new Key($secret_key, 'HS256'));
+            
+            if (!isset($user->data->user->id)) {
+                return new WP_Error(
+                    'jwt_auth_invalid_token',
+                    'Invalid token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
+            if (!isset($user->data->user->role)) {
+                return new WP_Error(
+                    'jwt_auth_invalid_role',
+                    'Invalid role.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+            }
+        } catch (SignatureInvalidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }  catch (BeforeValidException $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        } catch (ExpiredException $e) {
+            return new WP_Error(
+                    'jwt_auth_expired_token',
+                    'Expired token.',
+                    array(
+                        'status' => 403,
+                    )
+                );
+        }
+        catch(Exception $e) {
+            return new WP_Error(
+                'jwt_auth_invalid_token',
+                'Invalid token.',
+                array(
+                    'status' => 403,
+                )
+            );
+        }
+
+    }
+
+    return $result;
+}
