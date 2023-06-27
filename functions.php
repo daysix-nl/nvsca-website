@@ -1086,3 +1086,60 @@ function jwt_authenticate_for_rest_requestsBestuur($response, $handler, $request
 
     return $response;
 }
+/*
+|--------------------------------------------------------------------------
+| Custom post type teamlocator
+|--------------------------------------------------------------------------
+|
+| 
+| 
+|
+*/
+function create_teamlocator_post_type()
+{
+    // Labels for the post type
+    $labels = array(
+        'name' => __('Teamlocator'),
+        'singular_name' => __('Teamlocator'),
+        'menu_name' => __('Teamlocator'),
+        'add_new' => __('Add New'),
+        'add_new_item' => __('Add New Teamlocator'),
+        'edit_item' => __('Edit Teamlocator'),
+        'new_item' => __('New Teamlocator'),
+        'view_item' => __('View Teamlocator'),
+        'search_items' => __('Search Teamlocator'),
+        'not_found' => __('No teamlocator found'),
+        'not_found_in_trash' => __('No teamlocator found in Trash'),
+        'all_items' => __('All Teamlocators'),
+    );
+    // Options for the post type
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'publicly_queryable' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'teamlocator'),
+        'capability_type' => 'post',
+        'has_archive' => true,
+        'hierarchical' => false,
+        'menu_position' => 5,
+        'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'author'),
+        'taxonomies' => array('category', 'post_tag'),
+        'menu_icon' => 'dashicons-location',
+    );
+
+    // Register the post type
+    register_post_type('teamlocator', $args);
+}
+add_action('init', 'create_teamlocator_post_type');
+
+function add_teamlocator_rest_support()
+{
+    global $wp_post_types;
+    $wp_post_types['teamlocator']->show_in_rest = true;
+    $wp_post_types['teamlocator']->rest_base = 'teamlocators';
+    $wp_post_types['teamlocator']->rest_controller_class = 'WP_REST_Posts_Controller';
+}
+add_action('init', 'add_teamlocator_rest_support', 25);
