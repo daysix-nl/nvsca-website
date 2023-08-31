@@ -1153,7 +1153,7 @@ function compare_and_update_fields($mailjet_data, $user) {
     $new_mailjet_data = [];
 
     $field_mapping = [
-        'Email' => $user->user_email,
+        'email2' => $user["email-2"],
     ];
 
     foreach ($field_mapping as $mailjet_field => $wp_value) {
