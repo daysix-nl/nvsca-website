@@ -15,27 +15,27 @@ use Firebase\JWT\ExpiredException;
 use Firebase\JWT\SignatureInvalidException;
 use Firebase\JWT\BeforeValidException;
 
-function add_cors_http_header(){
-    $origin = $_SERVER['HTTP_ORIGIN'];
+// function add_cors_http_header(){
+//     $origin = $_SERVER['HTTP_ORIGIN'];
 
-    $allowed_domains = [
-        'http://localhost:3000',
-        // add any other domains you want to allow here
-    ];
+//     $allowed_domains = [
+//         'http://localhost:3000',
+//         // add any other domains you want to allow here
+//     ];
 
-    if (in_array($origin, $allowed_domains)) {
-        header("Access-Control-Allow-Origin: $origin");
-    }
+//     if (in_array($origin, $allowed_domains)) {
+//         header("Access-Control-Allow-Origin: $origin");
+//     }
 
-    header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE"); // Modify this line with your needed methods
-    header("Access-Control-Allow-Headers: Content-Type, X-Auth-Token, Origin, Authorization"); // Modify this line with your needed headers
-    header("Access-Control-Allow-Credentials: true");
+//     header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE"); // Modify this line with your needed methods
+//     header("Access-Control-Allow-Headers: Content-Type, X-Auth-Token, Origin, Authorization"); // Modify this line with your needed headers
+//     header("Access-Control-Allow-Credentials: true");
 
-    if ('OPTIONS' == $_SERVER['REQUEST_METHOD']) {
-        exit(0);
-    }
-}
-add_action('init','add_cors_http_header');
+//     if ('OPTIONS' == $_SERVER['REQUEST_METHOD']) {
+//         exit(0);
+//     }
+// }
+// add_action('init','add_cors_http_header');
 
 /*
 |--------------------------------------------------------------------------
@@ -1143,3 +1143,25 @@ function add_teamlocator_rest_support()
     $wp_post_types['teamlocator']->rest_controller_class = 'WP_REST_Posts_Controller';
 }
 add_action('init', 'add_teamlocator_rest_support', 25);
+
+
+
+
+
+function compare_and_update_fields($mailjet_data, $user) {
+    $needs_update = false;
+    $new_mailjet_data = [];
+
+    $field_mapping = [
+        'Email' => $user->user_email,
+    ];
+
+    foreach ($field_mapping as $mailjet_field => $wp_value) {
+        if (isset($mailjet_data[$mailjet_field]) && $mailjet_data[$mailjet_field] !== $wp_value) {
+            $new_mailjet_data[$mailjet_field] = $wp_value;
+            $needs_update = true;
+        }
+    }
+
+    return [$new_mailjet_data, $needs_update];
+}
